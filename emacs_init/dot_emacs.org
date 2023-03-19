@@ -1,0 +1,1254 @@
+;; -*- lexical-binding: t; -*-
+#+startup: content
+#+title: Emacs literate configuration
+#+author: yaidel
+#+date: [2022-12-08 Thu]
+
+* Interface tweaks
+
+First of all, avoid the output of =custom-set-variables= to the =~/.emacs.d/init.el= file. This some times
+writes there some customization which interferes with the settings appearing in this file, making them
+useless. I have had some rough times debugging stuffs because they were defined automatically by Emacs in the
+=custom-set-variables= section of the =init= file.
+
+#+begin_src emacs-lisp
+(setq-default custom-file null-device)
+#+end_src
+
+Then some other tweaks of the interface.
+
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t)   ;; Inhibits the startup bottom screen
+  (setq-default fill-column 110)
+  (set-face-attribute 'default nil :height 130) ;; Font size
+  (setq column-number-mode t)
+#+end_src
+
+Disable menubar, scrollbar, toolbar and fringe:
+
+#+begin_src emacs-lisp
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (fringe-mode -1)
+  (scroll-bar-mode -1)
+#+end_src
+
+Some key-bindings
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<f5>") 'revert-buffer)
+  (global-set-key (kbd "<f8>") 'eshell)
+  (global-set-key (kbd "<f1>") 'display-line-numbers-mode)
+#+end_src
+
+Show line numbers by default in programming mode
+
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+#+end_src
+
+** Window startup geometry
+
+Here the frame can start maximized with the following option
+
+#+begin_src emacs-lisp
+  (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+#+end_src
+
+Or it can be set to a certain geometry with the following options
+
+#+begin_src emacs-lisp
+  ;; (setq default-frame-alist
+  ;;       '((top . 200) (left . 400)
+  ;; 	(width . 140) (height . 40)))
+#+end_src
+
+** Theme
+
+One theme I used for a long time was Leuven which can be loaded with ~(load-theme 'leuven t)~, however
+[[https://protesilaos.com/][Protesilaos]]' themes are really nice alternatives which have been gratefully welcomed in the Emacs comunity. In
+my case I am using the =ef-themes= because they are really colorful (in a balanced maner). 
+
+#+begin_src emacs-lisp
+  (use-package ef-themes
+    :ensure t
+    :init
+    (mapc #'disable-theme custom-enabled-themes)
+    :config
+    (setq ef-themes-mixed-fonts t
+	  ef-themes-variable-pitch-ui t)
+    ;; Load the theme of choice:
+    (load-theme 'ef-light :no-confirm)
+    )
+#+end_src
+
+** UTF-8 encoding:
+
+#+BEGIN_SRC emacs-lisp
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+#+END_SRC
+
+** Line indicator
+
+Line indicator options, also employing a package maintained by [[https://protesilaos.com/][Protesilaos]], =lin=:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lin
+    :ensure t
+    :config
+    (setq lin-face 'lin-mac-override-fg)
+    (setq lin-mode-hooks (append lin-mode-hooks '(prog-mode-hook org-mode-hook)))
+    (lin-global-mode 1))
+#+END_SRC
+
+** Change and 'yes or no' prompts to 'y or n':
+
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+** Auto-fill-mode for text based buffers
+
+#+begin_src emacs-lisp
+ ;; (add-hook 'text-mode-hook 'auto-fill-mode)
+#+end_src
+  
+** Edit the configuration file
+
+Set =C-c e= to edit init file:
+
+#+BEGIN_SRC emacs-lisp
+  (defun config-visit ()
+    (interactive)
+    (find-file "~/config/dotFiles/emacs_init/dot_emacs.org"))
+  (global-set-key (kbd "C-c e") 'config-visit)
+#+END_SRC
+
+Reload init file when =C-c r= is pressed:
+
+#+BEGIN_SRC emacs-lisp
+  (defun config-reload ()
+    "Reloads ~/.emacs.d/config.org at runtime"
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/config/dotFiles/emacs_init/dot_emacs.org")))
+  (global-set-key (kbd "C-c r") 'config-reload)
+#+END_SRC
+
+* Windows management
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :init
+    (progn
+      (global-set-key [remap other-window] 'ace-window)
+      (custom-set-faces
+       '(aw-leading-char-face
+	 ((t (:inherit ace-jump-face-foreground :height 2.0)))))
+      ))
+#+END_SRC
+
+* Searching and helping to find things
+** Vertico configuration
+#+begin_src emacs-lisp
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode +1)
+
+    ;; Different scroll margin
+    ;; (setq vertico-scroll-margin 0)
+
+    ;; Show more candidates
+    ;; (setq vertico-count 20)
+
+    ;; Grow and shrink the Vertico minibuffer
+    ;; (setq vertico-resize t)
+
+    ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+    ;; (setq vertico-cycle t)
+    )
+#+end_src
+** Savehist configuration
+#+begin_src emacs-lisp
+  (use-package savehist
+    :ensure t
+    :init
+    (savehist-mode))
+#+end_src
+** Orderless configuration
+#+begin_src emacs-lisp
+  (use-package orderless
+    :ensure t
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(orderless)
+	  completion-category-defaults nil
+	  completion-category-overrides '((file (styles partial-completion))))
+    )
+#+end_src
+** Marginalia configuration
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :ensure t
+    ;; Either bind `marginalia-cycle` globally or only in the minibuffer
+    :bind (("M-A" . marginalia-cycle)
+	   :map minibuffer-local-map
+	   ("M-A" . marginalia-cycle))
+
+    ;; The :init configuration is always executed (Not lazy!)
+    :init
+
+    ;; Must be in the :init section of use-package such that the mode gets
+    ;; enabled right away. Note that this forces loading the package.
+    (marginalia-mode))
+#+end_src
+
+** Consult configuration
+#+begin_src emacs-lisp
+  (use-package consult
+    :ensure t
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings (mode-specific-map)
+	   ;; ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+	   ;; ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+	   ;; ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+	   ;; ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+	   ;; ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+	   ;; Custom M-# bindings for fast register access
+	   ;; ("M-#" . consult-register-load)
+	   ;; ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+	   ;; ("C-M-#" . consult-register)
+	   ;;  Other custom bindings
+	   ;; ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+	   ;; ("<help> a" . consult-apropos)            ;; orig. apropos-command
+	   ;; M-g bindings (goto-map)
+	   ;; ("M-g e" . consult-compile-error)
+	   ;; ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+	   ;; ("M-g g" . consult-goto-line)             ;; orig. goto-line
+	   ;; ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+	   ;; ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+	   ;; ("M-g m" . consult-mark)
+	   ;; ("M-g k" . consult-global-mark)
+	   ;; ("M-g i" . consult-imenu)
+	   ;; ("M-g I" . consult-imenu-multi)
+	   ;; ;; M-s bindings (search-map)
+	   ;; ("M-s d" . consult-find)
+	   ;; ("M-s D" . consult-locate)
+	   ;; ("M-s g" . consult-grep)
+	   ;; ("M-s G" . consult-git-grep)
+	   ;; ("M-s r" . consult-ripgrep)
+	   ;; ("M-s l" . consult-line)
+	   ;; ("M-s L" . consult-line-multi)
+	   ;; ("M-s m" . consult-multi-occur)
+	   ;; ("M-s k" . consult-keep-lines)
+	   ;; ("M-s u" . consult-focus-lines)
+	   ;; ;; Isearch integration
+	   ;; ("M-s e" . consult-isearch-history)
+	   ;; :map isearch-mode-map
+	   ;; ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+	   ;; ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+	   ;; ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+	   ;; ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+	   ;; ;; Minibuffer history
+	   ;; :map minibuffer-local-map
+	   ;; ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+	   ;; ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+	   )
+    ;; ;; Enable automatic preview at point in the *Completions* buffer. This is
+    ;; ;; relevant when you use the default completion UI.
+    :hook (completion-list-mode . consult-preview-at-point-mode)
+
+    ;; The :init configuration is always executed (Not lazy)
+    :init
+
+    ;; Optionally configure the register formatting. This improves the register
+    ;; preview for `consult-register', `consult-register-load',
+    ;; `consult-register-store' and the Emacs built-ins.
+    (setq register-preview-delay 0.5
+	  register-preview-function #'consult-register-format)
+
+    ;; Optionally tweak the register preview window.
+    ;; This adds thin lines, sorting and hides the mode line of the window.
+    (advice-add #'register-preview :override #'consult-register-window)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+	  xref-show-definitions-function #'consult-xref)
+
+    ;; Configure other variables and modes in the :config section,
+    ;; after lazily loading the package.
+    :config
+
+    ;; Optionally configure preview. The default value
+    ;; is 'any, such that any key triggers the preview.
+    ;; (setq consult-preview-key 'any)
+    ;; (setq consult-preview-key (kbd "M-."))
+    ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+    ;; For some commands and buffer sources it is useful to configure the
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme
+     :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-recent-file
+     consult--source-project-recent-file
+     :preview-key (kbd "M-."))
+
+    ;; Optionally configure the narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<") ;; (kbd "C-+")
+    )
+#+end_src
+** Embark configuration
+#+begin_src emacs-lisp
+  (use-package embark
+    :ensure t
+    :bind
+    (("C-}" . embark-act)         ;; pick some comfortable binding
+     ("C-;" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings)  ;; alternative for `describe-bindings'
+     ("M-o" . embark-export))
+    :init
+
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+
+    :config
+
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+
+  ;; Consult users will also want the embark-consult package.
+  (use-package embark-consult
+    :ensure t
+    :after (embark consult)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+
+* General packages
+** Dired
+The Dired documentation can be found by =C-h m= on the buffer, ot at [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][the GNU manual]].
+   
+List directories before files:
+
+#+BEGIN_SRC emacs-lisp
+  (defun mydired-sort ()
+    "Sort dired listings with directories first."
+    (save-excursion
+      (let (buffer-read-only)
+	(forward-line 2) ;; beyond dir. header 
+	(sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+      (set-buffer-modified-p nil)))
+
+  (defadvice dired-readin
+      (after dired-after-updating-hook first () activate)
+    "Sort dired listings with directories first before adding marks."
+    (mydired-sort))
+#+END_SRC
+
+Show file sizes in KB, MB, GB instead of just bytes:
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default dired-listing-switches "-alh")
+#+END_SRC
+
+Delete the previous buffer each time a new folder is entered. This way you do not end up with several buffers
+opened, one for each folder you visited.
+
+#+begin_src emacs-lisp
+(setq dired-kill-when-opening-new-dired-buffer t)
+#+end_src
+
+
+Ask for the creation of destination folders which do not exist.
+
+#+begin_src emacs-lisp
+(setq dired-create-destination-dirs "ask")
+#+end_src
+
+Hide dotfiles by default, and add =super + h= keybinding to toggle:
+
+#+BEGIN_SRC emacs-lisp
+  ;; (add-hook 'dired-load-hook #'(lambda () (require 'dired-x))) ; Load Dired X when Dired is loaded.
+  ;; (setq dired-omit-mode t) ; Turn on Omit mode.
+
+  ;; (require 'dired-x)
+  ;; (setq-default dired-omit-files-p t) ; Buffer-local variable
+  ;; (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
+
+  ;; ;; keybinding toggle
+  ;; (define-key dired-mode-map (kbd "s-h") 'dired-omit-mode)
+#+END_SRC
+** Elfeed
+   
+Load elfeed
+
+#+begin_src emacs-lisp
+  ;; the database is strored in ~/.elfeed by default
+  ;; after remove an rss, if you want to remove old entries from it, just delete the database with emacs shuted down 
+  (use-package elfeed
+    :ensure t
+    :init
+    (setq elfeed-db-directory "~/config/elfeed/elfeeddb")
+    :bind
+    (("C-x w" . elfeed))
+    :config
+    ;; Personalized authors list
+    (add-hook 'elfeed-search-mode-hook 'elfeed-update)
+    ;;(setq elfeed-search-title-max-width 100)
+    (setq elfeed-search-filter "@2-week-ago +unread"))
+#+end_src
+
+Load elfeed-org to allow rss feeds to be set up with an org file: (It is important to note that each 1st
+heading need to have the tag =elfeed= in order to be correctly parsed by the =elfeed-org= package. This
+means that all the entries have the =elfeed= tag.)
+
+   
+#+begin_src emacs-lisp
+  (use-package elfeed-org
+    :ensure t
+    :config
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/config/elfeed/elfeed.org"))
+    )
+#+end_src
+
+Download video of the feed in the folder ~/Videos directly with the key binding =d=
+
+#+begin_src emacs-lisp
+  (defun ytg/yt-dl-it (url)
+    "Downloads the URL in an async shell"
+    (let ((default-directory "~/Videos"))
+      (async-shell-command (format "youtube-dl %s" url))))
+
+  (defun ytg/elfeed-youtube-dl (&optional use-generic-p)
+    "Youtube-DL link"
+    (interactive "P")
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+	       ;;do (elfeed-untag entry 'unread)
+	       when (elfeed-entry-link entry)
+	       do (ytg/yt-dl-it it))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
+
+  (define-key elfeed-search-mode-map (kbd "d") 'ytg/elfeed-youtube-dl)
+#+end_src
+
+Start reproducing the video of the feed with the key =v=
+   
+#+begin_src emacs-lisp
+  (defun ytg/elfeed-v-mpv (url)
+    "Watch a video from URL in MPV" 
+    (async-shell-command (format "mpv %s" url)))
+
+  (defun ytg/elfeed-view-mpv (&optional use-generic-p)
+    "Youtube-feed link"
+    (interactive "P")
+    (let ((buffer (current-buffer))
+	  (entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+	       do (elfeed-untag entry 'unread)
+	       when (elfeed-entry-link entry) 
+	       do (ytg/elfeed-v-mpv it)) 
+      (mapc #'elfeed-search-update-entry entries) 
+      (unless (use-region-p) (forward-line)))) 
+
+  (define-key elfeed-search-mode-map (kbd "v") 'ytg/elfeed-view-mpv)
+#+end_src
+
+Appearance settings:
+
+#+BEGIN_SRC emacs-lisp
+  ;; (setq-default elfeed-initial-tags nil)
+  ;; (setq-default elfeed-search-date-format (quote ("%a, %R" 10 :left)))
+  ;; (setq-default elfeed-curl-max-connections 100)
+  ;; (setq-default elfeed-search-trailing-width 30)
+#+END_SRC
+** Which-key
+
+When typing in the M-x, it shows a list of possibilities
+
+#+BEGIN_SRC emacs-lisp
+
+
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+#+END_SRC
+
+* Autocomplete
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package auto-complete
+  ;;   :ensure t
+  ;;   :init
+  ;;   (progn
+  ;;     (ac-config-default)
+  ;;     (global-auto-complete-mode t)
+  ;;     ))
+#+END_SRC
+
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :init
+    ;;(setq global-company-mode t)
+    :config
+    (setq company-tooltip-align-annotations t)
+    (setq company-tooltip-flip-when-above t)
+    (setq company-idle-delay 0.2)
+    (setq company-tooltip-align-annotations t)
+    (setq company-minimum-prefix-length 3)
+    (setq company-format-margin-function #'company-text-icons-margin)
+    )
+
+  (add-hook 'after-init-hook 'global-company-mode)
+#+end_src
+* Spelling
+#+begin_src emacs-lisp
+  (require 'ispell)
+#+end_src
+* Python
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package jedi  ;; It need virtualenv to be installed in the pc (pip install virtualenv)
+  ;;   :ensure t
+  ;;   :init
+  ;;   (add-hook 'python-mode-hook 'jedi:setup)
+  ;;   (add-hook 'python-mode-hook 'jedi:ac-setup)
+  ;;   (add-hook 'python-mode-hook 'jedi:install-server)
+
+  ;;   :config
+  ;;   (progn
+  ;;     (setq jedi:environment-root "jedi")  ; or any other name you like
+  ;;     (setq jedi:environment-virtualenv
+  ;; 	  (append python-environment-virtualenv
+  ;; 		  '("--python" "/usr/bin/python3")))
+  ;;     (setq jedi:complete-on-dot t)
+  ;;     (setq jedi:get-in-function-call-delay 1)
+  ;;     ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (defcustom python-shell-interpreter "python3"
+  ;;   "Default Python interpreter for shell."
+  ;;   :type 'string
+  ;;   :group 'python)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; ;; It is a package for documentation, completion, syntax check ...
+  ;; (use-package elpy
+  ;;   :ensure t
+  ;;   :config
+  ;;   (elpy-enable))
+#+END_SRC
+
+* Latex
+
+#+BEGIN_SRC emacs-lisp
+  (use-package tex
+    :ensure auctex
+    :ensure reftex
+    :hook ((LaTeX-mode . flyspell-mode)
+           (LaTeX-mode . turn-on-auto-fill)
+           (LaTeX-mode . LaTeX-math-mode)
+           (LaTeX-mode . turn-on-reftex)
+           ;; (LaTeX-mode . prettify-symbols-mode) ; Para que salgan los simbolos en lugar de codigos
+           )
+    :config
+    (setq TeX-parse-self t)
+    (setq TeX-auto-save t)
+    (setq-default TeX-master nil)
+    (setq TeX-auto-local ".auto")
+    ;;(setq-default TeX-parse-all-errors t)
+    (setq-default TeX-display-help t)
+    (setq reftex-label-alist '(AMSTeX)) ;; Para que ponga \eqref
+    (setq reftex-plug-into-AUCTeX t)
+    (setq bibtex-dialect 'biblatex)
+    (setq reftex-cite-format 'biblatex)
+    (setq LaTeX-section-hook
+          '(LaTeX-section-heading
+            LaTeX-section-title
+            LaTeX-section-toc
+            LaTeX-section-section
+            LaTeX-section-label))
+
+    (eval-after-load "tex" '(progn
+                              (setq LaTeX-command (concat LaTeX-command " -shell-escape"))))
+    ;; Don't forget to configure
+    ;; Okular to use emacs in
+    ;; "Configuration/Configure Okular/Editor"
+    ;; = Editor = Emacsclient. (you should see
+    ;; emacsclient -a emacs --no-wait +%l %(format "message" format-args))
+    ;; in the field "Command".
+
+    ;; Enable synctex correlation. From Okular just press
+    ;; Shift + Left click to go to the good line.
+    ;; From Evince just press Ctrl+Shift+Left click to go to the good line.
+    (setq TeX-source-correlate-mode t
+          TeX-source-correlate-start-server t)
+
+    (eval-after-load "tex"
+      '(setcar (cdr (assoc 'output-pdf TeX-view-program-selection)) "Evince"))
+    )
+#+END_SRC
+* Spell for windows
+# Info tomada de: https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html
+#+BEGIN_SRC emacs-lisp
+  ;; (if (eq system-type 'ms-dos)
+  ;;     ((add-to-list 'exec-path "E:/config/hunspell/bin/")
+  ;;      (setq ispell-program-name (locate-file "hunspell"
+  ;; 					    exec-path exec-suffixes 'file-executable-p))
+
+  ;;      (setq ispell-local-dictionary-alist '(
+
+  ;; 					   (nil
+  ;; 					    "[[:alpha:]]"
+  ;; 					    "[^[:alpha:]]"
+  ;; 					    "[']"
+  ;; 					    t
+  ;; 					    ("-d" "en_US" "-p" "E:\\config\\hunspell\\share\\hunspell\\en_US.aff")
+  ;; 					    nil
+  ;; 					    iso-8859-1)
+
+  ;; 					   ("american"
+  ;; 					    "[[:alpha:]]"
+  ;; 					    "[^[:alpha:]]"
+  ;; 					    "[']"
+  ;; 					    t
+  ;; 					    ("-d" "en_US" "-p" "E:\\config\\hunspell\\share\\hunspell\\en_US.aff")
+  ;; 					    nil
+  ;; 					    iso-8859-1)
+  ;; 					   ))
+  ;;      )
+  ;;   (setq ispell-program-name "aspell")
+  ;;   )
+
+  ;; ;; activar ispell
+  ;;(require 'ispell)
+#+END_SRC
+* Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+  )
+#+END_SRC
+
+* ORG mode specifications
+
+Take into account that in the [[*Hugo][Hugo]] section a snippet was introduced to automatically modify the front matter
+property =lastmod= (see [[orgmode-lastmod-property-auto][here]]). It is intended for management of the modification times of the blog posts.
+
+** Org mode
+
+Setting the name of the file where all the captured notes are going to.
+
+#+begin_src emacs-lisp
+  (setq organizer-file "20230105T175954--organizer__personal.org")
+#+end_src
+
+
+Set =C-c o= to edit the =organizer= file:
+
+#+BEGIN_SRC emacs-lisp
+  (defun organizer-visit ()
+    (interactive)
+    (find-file (concat "/media/Datos/notes/" organizer-file)))
+  (global-set-key (kbd "C-c o") 'organizer-visit)
+#+END_SRC
+
+
+The =org-agenda-files= configuration has been written in the section [[*Adding _project files to the agenda][Adding _project files to the agenda]],
+because it uses [[*Denote][Denote's]] tags in the file name to detect the project files and add them to the list.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure t
+    :hook
+    (org-mode . flyspell-mode)
+    :config
+    ;; Activating Org Indent Mode by default 
+    (setq org-startup-indented t)
+    ;; Clocking projects time settings to save clocking history throughout sessions
+    (setq org-clock-persist 'history)
+    (org-clock-persistence-insinuate)
+    (setq org-clock-idle-time 10)
+    ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+    ;; with 0:00 duration
+    (setq org-clock-out-remove-zero-time-clocks t)
+    (setq calendar-week-start-day 1)
+    (setq org-adapt-indentation nil) ;; set the identation method in ORG mode
+
+    ;;
+    ;; Tasks and Todos
+    (setq org-todo-keywords
+          '((sequence "TODO" "NEXT" "WORKING" "WAITING" "DELEGATED" "|" "DONE" "CANCELLED")))
+    (setq org-todo-keyword-faces
+          (quote (("TODO"      :background "IndianRed1"      :foreground "black" :weight bold)
+                  ("NEXT"      :background "sky blue"        :foreground "black" :weight bold)
+                  ("WORKING"   :background "lemon chiffon"   :foreground "black" :weight bold)
+                  ("WAITING"   :background "lavender"        :foreground "black" :weight bold)
+                  ("DONE"      :background "DarkOliveGreen2" :foreground "black" :weight bold)
+                  ("CANCELLED" :background "DarkOliveGreen2" :foreground "black" :weight bold)
+                  ("DELEGATED" :background "aquamarine2"     :foreground "black" :weight bold))))
+    (setq org-tag-alist
+          '(("@comp_running" . ?r) ("@in_review" . ?v) ("@needs_review" . ?n)
+            ("@pyrene" . ?p) ("@curta" . ?c) ("@irene" . ?i) ("@capture" . ?q)
+            ("@project" . ?j)))
+
+    ;;
+    ;; Capture
+    (setq org-directory "/media/Datos/notes/")
+    (setq org-default-notes-file (concat org-directory organizer-file))
+    ;; use C-c c to start capture mode
+    (global-set-key (kbd "C-c c") 'org-capture)
+    ;; capture templates for: TODO tasks, Notes, appointments, meetings
+    (setq org-templates-location-var (concat org-directory organizer-file))
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file+headline org-templates-location-var "Inbox")
+             "* TODO [#C] %? ")))
+
+    ;; Refile
+    ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+    ;; C-c C-w for refile
+    (setq org-refile-targets (quote ((nil :maxlevel . 3)
+                                     (org-agenda-files :maxlevel . 3))))
+    ;;
+    ;; Agenda customization
+    ;;
+    (global-set-key (kbd "C-c a") 'org-agenda)
+    ;;
+    ;; Format of the columns in the agenda view
+    (setq org-columns-default-format-for-agenda "%65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)")
+
+    (setq org-agenda-custom-commands
+          '(("x" "My Agenda"  
+             ((agenda ""
+                      ((org-agenda-sorting-strategy
+                        (quote
+                         (time-up deadline-down priority-down)))))
+              (tags-todo "TODO=\"WORKING\""
+                         ((org-agenda-overriding-header "Tasks in progress")
+                          (org-agenda-sorting-strategy
+                           (quote
+                            (priority-down deadline-down effort-down)))))
+              (tags-todo "TODO=\"NEXT\""
+                         ((org-agenda-overriding-header "Next tasks")
+                          (org-agenda-sorting-strategy
+                           (quote
+                            (priority-down deadline-down effort-down)))
+                          (org-agenda-max-entries 5)))
+              (tags-todo "TODO=\"TODO\""
+                         ((org-agenda-overriding-header "TODOs")
+                          (org-agenda-sorting-strategy
+                           (quote
+                            (priority-down deadline-down effort-down)))
+                          (org-agenda-max-entries 5)))
+              (tags "+@capture-@excludeFromAgenda"
+                    ((org-agenda-overriding-header "Items to refile")
+                     ;;(org-tags-match-list-sublevels nil)
+                     (org-agenda-sorting-strategy
+                      (quote
+                       (priority-down time-down)))))
+              ;;(stuck "" nil)
+              (org-agenda-list-stuck-projects)
+              (tags "CLOSED<=\"<-1m>\""
+                    ((org-agenda-overriding-header "Items to archive (older than a month)")
+                     (org-agenda-span
+                      (quote month))))))))
+
+    (setq org-stuck-projects
+          '("+@project/-DONE-CANCELLED-DELEGATED" ;; entries considered as projects
+            ("NEXT" "WORKING")                    ;; if none of these are present in the subtree, the project is stuck
+            nil                                   ;; list of tags identifying non-stuck projects
+            ""))                                  ;; arbitrary regular expression matching non-stuck projects
+
+    ;; as the @project tag defines what is a project, I do not want all the sub-trees are marked also as projects
+    ;; I want to manually set what are the projects 
+    (setq org-tags-exclude-from-inheritance '("@project" "project" "blog" "@excludeFromAgenda"))
+
+    )
+#+end_src
+
+Furthermore, to automatically set the values displayed in the agenda identifying the file from where the task
+is being pulled from to the "humanized" name of the file in the file-system, Boris Buliga proposed the
+following configuration in [[https://d12frosted.io/posts/2020-06-24-task-management-with-roam-vol2.html][this blog post]]. Nevertheless, after some time using it, I removed it from my
+configuration. A simpler solution is just to specify the =#+category:= value in the heading of the =org= file
+being added to the agenda, and that value will be the one appearing in the agenda dispatcher identifying that
+specific file. This solution is the implemented in =org-mode= by default, and therefore the more
+straightforward.
+
+It has to be taken into account that a field of 12 characters is designed to show the categories, so
+=#+category= values longer than 10 characters should not be used to maintain beauty and order in the agenda
+dispatcher.
+
+See also https://orgmode.org/manual/Categories.html for more.
+
+#+begin_src example
+  (defun vulpea-buffer-prop-get (name)
+    "Get a buffer property called NAME as a string."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                               (point-max) t)
+        (buffer-substring-no-properties
+         (match-beginning 1)
+         (match-end 1)))))
+
+  (defun vulpea-agenda-category (&optional len)
+    (let* ((file-name (when buffer-file-name
+                        (file-name-sans-extension
+                         (file-name-nondirectory buffer-file-name))))
+           (title (vulpea-buffer-prop-get "title"))
+           (category (org-get-category))
+           (result
+            (or (if (and
+                     title
+                     (string-equal category file-name))
+                    title
+                  category)
+                "")))
+      (if (numberp len)
+          (s-truncate len (s-pad-right len " " result))
+        result)))
+
+  (setq org-agenda-prefix-format
+        '((agenda . "%(vulpea-agenda-category 12)%?-12t%s ")
+          (todo .   "%(vulpea-agenda-category 12) ")
+          (tags .   "%(vulpea-agenda-category 12) ")
+          (search . "%(vulpea-agenda-category 12) ")))
+#+end_src
+
+Add the habit module to org.
+
+#+begin_src emacs-lisp
+  ;;
+  ;; Habits module enabled
+  ;; (add-to-list 'org-modules 'habit)
+  (require 'org-habit)
+#+end_src
+
+Remove tags from the right columns of the agenda dispatcher.
+
+#+begin_src emacs-lisp
+  (setq org-agenda-remove-tags t)
+#+end_src
+
+** Org-bullets
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :after (org)
+    :hook
+    (org-mode . (lambda () (org-bullets-mode 1)))
+    :config
+    (setq org-log-done 'time)
+    (setq org-file-apps-gnu ;; esto es para que al exportar en org-mode se abra correctamente el PDF
+	  (append '((t . "setsid -w xdg-open %s")) org-file-apps-gnu))
+    :bind
+    ("C-c x ." . 'org-time-stamp-inactive)
+    )
+#+END_SRC
+
+** Org Tempo
+
+For Structure Templates [[https://orgmode.org/manual/Structure-Templates.html][(see Org webpage]])
+
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+#+end_src
+* Org-cite and citations handling
+To configure the citations within Org, we have its Org-cite functionality. More information about this
+functionality can be found in the follwoing sources:
+- [[https://orgmode.org/manual/Citation-handling.html#Citation-handling][Citation handling (The Org Manual)]]
+- [[https://kristofferbalintona.me/posts/202206141852/][Citations in Org-mode (by Kristoffer Balintona)]]
+- [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html#fn.3][Introducing citations (by Tecosaur)]]
+
+To use Org-cite, the first step is to load the processor you are interested in to export your
+bibliography. See [[https://orgmode.org/manual/Citation-export-processors.html][available processors here]]. 
+
+#+begin_src emacs-lisp
+  (require 'oc-basic)
+  (require 'oc-biblatex)
+  (require 'oc-csl)
+#+end_src
+
+Then, either you specify in a per file basis the procesor to use and the address of the bib file, or you do it
+globally here at the configuration file. The first option would be as follows:
+
+#+begin_example
+,#+bibliography: /home/yaidel/config/latex_bib_databases/entireLibrary.bib
+,#+cite_export: biblatex
+Text with cites goes here.
+,#+print_bibliography:
+#+end_example
+
+Nevertheless, I have chosen the second option, globally specifying the processors for different types of
+files, and also the entireLibrary.bib resource. Note that =#+print_bibliography:= has to be entered manually
+where you whant the bibliography to appear.
+
+#+begin_src emacs-lisp
+  (setq org-cite-global-bibliography '("/home/yaidel/config/latex_bib_databases/entireLibrary.bib"))
+  (setq org-cite-export-processors
+        '((md . (csl "chicago-fullnote-bibliography.csl"))   ; Footnote reliant
+          (latex biblatex)                                   ; LaTeX
+          (odt . (csl "vancouver-superscript.csl"))  ; Footnote reliant
+          (t basic)))
+  (setq org-cite-csl-styles-dir "/media/Datos/config/Zotero/styles/")
+
+  (use-package citeproc
+    :ensure t)
+#+end_src
+
+For LaTeX it is possible to specify other options and customizations, and if it is true that there may be a
+way to do so exclusively using Org-cite, I have come to find the use of =#+LATEX_HEADER:= to add LaTeX
+options. I have created an Skeleton in [[*Org mode and note taking][Org mode and note taking]] section which is called
+=skeleton-org-export-latex-options= to handle automatically the necessary options to export to as I want.
+
+* ERC
+
+Initial configuration of the user and chats to connect to.
+
+#+begin_src emacs-lisp
+  (setq erc-server "irc.libera.chat"
+	erc-port "6697"
+	erc-nick "yaidel"
+	erc-user-full-name "yaidel"
+	erc-track-shorten-start 8
+	erc-autojoin-channels-alist '(("irc.libera.chat" . "#emacs"))
+	erc-kill-buffer-on-part t
+	erc-auto-query 'bury)
+#+end_src
+
+Configuration of what to show or not on the cannels and the changes in status of them and thir participants
+
+#+begin_src emacs-lisp
+  (setq ;;erc-track-exclude '("#emacs")
+   erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
+   erc-hide-list '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
+   erc-track-exclude-server-buffer t
+   erc-interpret-mirc-color t)
+#+end_src
+
+This causes ERC to connect to the Libera.Chat network upon hitting C-c f
+#+begin_src emacs-lisp
+  (global-set-key "\C-cf" (lambda () (interactive)
+			    (erc-tls :server "irc.libera.chat" :port "6697"
+				     :nick "yaidel")))
+#+end_src
+
+Facilitating the automatic loggin to the IRC server by using auth-source library.
+
+#+begin_src emacs-lisp
+  (setq erc-prompt-for-password nil)
+  (setq erc-prompt-for-nickserv-password nil)
+  (setq auth-sources '(password-store))
+#+end_src
+
+* Denote
+
+*Denote Tips*
+- When using =denote-open-or-create=, if you type-in the name of the note to find that it does not exists, and
+  you want to create it, after hitting ENTER you'll be redirected to the echo area to enter the name of the
+  note. *Hitting =M-p= will bring back the name you entered previously*
+
+#+begin_src emacs-lisp
+  (use-package denote
+    :ensure t
+    :config
+    ;;
+    ;; General key bindings
+    (setq denote-directory (expand-file-name "/media/Datos/notes"))
+    (setq denote-known-keywords '("emacs" "project"))
+    (setq denote-infer-keywords t)
+    (setq denote-sort-keywords t)
+    ;;
+    ;; Tweaking the frontmatter
+    (setq denote-org-front-matter
+          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    content\n\n")
+    :bind
+    ("C-c n n" . denote-open-or-create)
+    ("C-c n l" . denote-link-or-create)
+    ("C-c n b" . denote-link-find-file)
+    ("C-c n B" . denote-link-backlinks)
+    )
+#+end_src
+
+** Adding _project files to the agenda
+
+First we set the =org-agenda-files= to point to the notes folder, so it shoud use the =org-agenda-file-regexp=
+default value to load all the files inside it which end by =.org=. The next step is then to modify the
+=org-agenda-file-regexp= variable to load all the files containig the keyword =_project=.
+
+This means that all the project files will be added to the =org-agenda-file= variable, which is almost
+perfect, as those files are the ones which should have TODOs.
+
+Note that the =list= function is important in setting =org-agenda-files= with =setq=, as it need to be a list,
+and not a string. Also, if instead of =setq= one uses =add-to-list=, it is ok to just write the string. 
+
+#+begin_src emacs-lisp
+  (setq org-agenda-file-regexp "\\`[^.].*_project.*\\.org\\'")
+  (setq org-agenda-files (list "/media/Datos/notes/" (concat org-directory organizer-file)))
+#+end_src
+
+But the addition of the project files to the agenda will happen when Emacs loads, what if we added some other
+projects during this section and what to have them in the agenda?
+
+*The following functions need some more refinement*
+
+The problem with the function adding the new file tagged as =_project= to the list =org-agenda-files= is that
+it is an =after-save-hook=. This means that it will be executed each time you save a file. As consequence, if
+you opened an existing file which is a project you have already being working on, make some modifications, and
+save it, you will be saving a file which has the =_project= keyword. As consequence, it will be listed twice
+in the =org-agenda-files= variable, and its entries will appear duplicate in the agenda dispatcher. A solution
+to this problem would be to check if the file being added already exists in the =org-agenda-files= list, and
+add it only if it is not. Unfortunately, at the moment I do not know how to do that en Elisp. The solution is
+to comment the function and add any new file in the session to the =org-agenda-files= by using the
+=org-agenda-file-to-front= (bind to =C-c [=). In a new session the new project will be added automatically due
+to the above declaration of =org-agenda-file-regexp=.
+
+Additionally, Protesilaos also provided a function which deletes the file from the =org-agenda-files= variable
+when the tag =project= is removed. Nevertheless, it has a problem: when the _project keyword is removed (by
+using =denote-keywords-remove=), then the file is no longer named as it is specified in the =org-agenda-files=
+variable, because the =_project= part of the name was removed together with the keyword. For that reason this
+function will never succeed in removing the file from the list.
+
+Anyhow, the files will be deleted once emacs is closed and reopened, due to the definition of
+=org-agenda-files= and =org-agenda-file-regexp= (see above).
+
+----------
+
+#+begin_src emacs-lisp
+  ;; (defvar my-denote-to-agenda-regexp "_project"
+  ;;     "Denote file names that are added to the agenda.
+  ;;       See `my-denote-add-to-agenda'.")
+  ;;
+  ;;   (defun my-denote-add-to-agenda ()
+  ;;     "Add current file to the `org-agenda-files', if needed.
+  ;;       The file's name must match the `my-denote-to-agenda-regexp'.
+  ;;
+  ;;       Add this to the `after-save-hook' or call it interactively."
+  ;;     (interactive)
+  ;;     (when-let* ((file (buffer-file-name))
+  ;;                 ((denote-file-is-note-p file))
+  ;;                 ((string-match-p my-denote-to-agenda-regexp (buffer-file-name))))
+  ;;       (add-to-list 'org-agenda-files file)))
+  ;;
+  ;;   (add-hook 'after-save-hook #'my-denote-add-to-agenda)
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; (defun my-denote-remove-from-agenda ()
+  ;;   "Remove current file from the `org-agenda-files'.
+  ;;     See `my-denote-add-to-agenda' for how to add files to the Org
+  ;;     agenda."
+  ;;   (interactive)
+  ;;   (when-let* ((file (buffer-file-name))
+  ;;               ((string-match-p my-denote-to-agenda-regexp (buffer-file-name))))
+  ;;     (setq org-agenda-files (delete file org-agenda-files))))
+  ;; (add-hook 'after-save-hook #'my-denote-remove-from-agenda)
+#+end_src
+
+-----------
+
+Furthermore, to those using Org-roam, https://d12frosted.io/ has a perfect solution to add files with TODOs to
+the =org-agenda-files= variable. In fact, that solution is much better than adding all files with the
+=_project= keyword in their name, but it is not possible to implement while using Denote. Because Denote do
+not uses databases, the search for all the files containing =:project:= as keyword in the org heading is not
+possible. 
+
+* Markdown mode
+
+#+begin_src emacs-lisp
+    (use-package markdown-mode
+      :ensure t
+      :mode ("README\\.md\\'" . gfm-mode)
+      :init (setq markdown-command "multimarkdown")
+      :hook
+      (markdown-mode . flyspell-mode)
+      )
+#+end_src
+
+* Skeletons
+
+Skeletons are a functionality available in Emacs Lisp which serves as shorthands, kind of what Yasnippets do,
+but it already incorporated into Emacs and no other package is needed. The syntax they follow can be see at
+[[https://www.gnu.org/software/emacs/manual/html_node/autotype/Skeleton-Language.html][the manual page]]. Some further examples and explainations can also be found at the Emacswiki [[https://www.emacswiki.org/emacs/SkeletonMode][SkeletonMode page]].
+
+** Org mode and note taking
+
+For more configuration of the LaTex export options, see:
+- The [[https://orgmode.org/manual/LaTeX-Export.html][LaTeX Export]] section of the Org-mode manual.
+
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-org-export-latex-options
+    "Options inserted into an org file to export it to LaTex or PDF."
+    nil
+    "#+LATEX_CLASS_OPTIONS: [12pt]\n"
+    "#+LATEX_HEADER: \\usepackage[style=numeric-comp, sorting=none, maxbibnames=3, minbibnames=3, maxcitenames=1, mincitenames=1, isbn=false, url=false, doi=false, eprint=false, related=false]{biblatex}\n"
+    "#+LATEX_HEADER: \\renewbibmacro{in:}{}\n"
+    "#+OPTIONS: \<:nil c:nil todo:nil H:5\n\n"
+
+    _
+
+    "\n\n* References\n"
+    ":PROPERTIES:\n"
+    ":UNNUMBERED: t\n"
+    ":END:\n"
+    "#+print_bibliography: :heading none"
+  )
+#+end_src
+
+Project Meaningful Planning
+
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-project-body
+    "Insert the body of the Project Planning, acording to the Getting Things Done principles"
+    nil
+    "* NAME OF THE PROJECT"_ " :@project:\n" 
+    "\n"
+    "Think carefully, after the Purpose and Principles section completion, if the project is really worth our\n"
+    "effort and time.\n"
+    "\n"
+    "- /Resources/: Me\n"
+    "\n"
+    "** Purpose and Principles of the project\n"
+    "\n"
+    "The first step when starting a project is to clearly define *why* are we going to spend *our time* in it. This\n"
+    "way we can see why is it important, and why will its outcome be important to us. Also knowing the project's\n"
+    "standards and quality requirements will help us. We do not need to put so much effort in something which has\n"
+    "low standards, as a small tutorial for a friend, for example...some picture would suffice there.\n"
+    "\n"
+    "- /Why this project needs to be produced (its purpose)?/: \n"
+    "- /What are the standards and quality requirements for the project (its principles)/: \n"
+    "\n"
+    "** Outcome visioning\n"
+    "\n"
+    "What will result from a successful outcome? What will it be like when the project is out in the world? It is\n"
+    "easier to visualize something and head towards it, than going without direction. This will help to know what\n"
+    "it might take to get there.\n"
+    "\n"
+    "- /What the end product will ideally look like/: \n"
+    "- /How I will ideally feel afterwards/: \n"
+    "- /How others will ideally respond/: \n"
+    "- /What else will result from the completion of the project/: \n"
+    "\n"
+    "** Ideas dump\n"
+    "\n"
+    "Write *ever* idea that comes to your mind related to this project. It may be tasks to do, sub-projects to\n"
+    "derive from it, relations with other projects, strategies to follow... *Everything*. Aim for *quantity over\n"
+    "quality*. Resist organization, correction and analysis. Those are tasks to develop after all the ideas have\n"
+    "been written down.\n"
+    "\n"
+    "- Ideas ...\n"
+    "\n"
+    "** To do list\n"
+    "\n"
+    "After the [[*Ideas sump][Ideas dump]] process, and in its organization process, some tasks will need to be done to achieve the\n"
+    "final outcome of the project. This is the place to write them. Including the project in the\n"
+    "=org-agenda-files=, and adding =TODO= and =NEXT= items, it is really easy to keep track of its progress\n"
+    "together with all others at the same time, due to the =Org Agenda= exceptional capacities in doing so. If more\n"
+    "information on this is needed, it can be found at [[file:/media/Datos/notes/20230105T120307--working-in-org-mode__config_emacs.org::*Agenda files][this tips note]] or at the specific section of the Emacs\n"
+    "configuration file ([[*Adding _project files to the agenda][Adding _project files to the agenda]]).\n"
+    "\n"
+    )
+#+end_src
+
+The following Skeletons the column view I use to identify the time estimated and expended in the projects and
+tasks. More information can be found at the [[https://orgmode.org/manual/Column-View.html][Column View]] section of the Org-mode manual, but the most basic
+ones are given in the next table:
+
+| Keybinding  | Function          | Description                                                  |
+|-------------+-------------------+--------------------------------------------------------------|
+| C-c C-x e   | org-set-effort    | Set the effort property of the current entry.                |
+| C-c C-x C-c | org-columns       | Turn on column view on an Org mode file.                     |
+| C-c C-c     | org-ctrl-c-ctrl-c | If column view is active, in agenda or org buffers, quit it. |
+
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-column-project-times
+    "Insert a global column definition to show that time estimated VS the real time expended in a project."
+    nil
+    "#+columns:    %65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)"
+    )
+
+#+end_src
+
+** LaTeX
+
+Article skeleton
+
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-LaTeX-article
+    "The skeleton of an article in LaTeX"
+    nil
+    "\\documentclass{article}\n"
+    "\\usepackage{/home/yaidel/config/latex_styles/article_sty}\n"
+    "\\addbibresource{/home/yaidel/config/latex_bib_databases/entireLibrary.bib}\n"
+    "\n"
+    "\\title{}\n"
+    "\\author{Yaidel TOLEDO GONZALEZ}\n"
+    "\\date{\\today}\n"
+    "\n"
+    "\\begin{document}\n"
+    "\\maketitle\n"
+    "\\tableofcontents\n"
+    "\n"
+    _
+    "\n\n"
+    "\\printbibliography\n"
+    "\\end{document}\n"
+    )
+#+end_src
+
+** Hugo and blogging
+
+Heading for Markdown
+
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-md-heading-hugo-post
+    "Heading for a new post in Hugo using Org-mode"
+    nil
+    "---\n"
+    "title: \n" _
+    "author:\n"
+    "  post_name: yaidel\n"
+    "  mdata_name: yaidel\n"
+    "date: \"2023-01-01\"\n"
+    "lastmod: \"2023-01-01\"\n"
+    "categories: [""]\n"
+    "tags: [""]\n"
+    "draft: true\n"
+    "description: \n"
+    "---\n"
+    )
+#+end_src
+
+Figures polaroid like in a blog post
+
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-fig-polaroid
+    "Hugo shortcode for the images showed as Polaroid"
+    nil
+    
+    "{{< img class=\"polaroidImage\" width=\"50%\" src=\"image.png\" caption=\"Caption\" link=\"https://poview.org\" alt=\"Alternative text\" mouse=\"Mouse over\" >}}\n"
+    )
+#+end_src
+
