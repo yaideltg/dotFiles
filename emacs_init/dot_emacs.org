@@ -697,19 +697,17 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     ;;
     ;; Tasks and Todos
     (setq org-todo-keywords
-          '((sequence "TODO" "NEXT" "WORKING" "WAITING" "DELEGATED" "|" "DONE" "CANCELLED")))
+          '((sequence "TODO" "NEXT" "WORKING" "DELEGATED" "COMPUTING" "|" "DONE" "CANCELLED")))
     (setq org-todo-keyword-faces
           (quote (("TODO"      :background "IndianRed1"      :foreground "black" :weight bold)
                   ("NEXT"      :background "sky blue"        :foreground "black" :weight bold)
                   ("WORKING"   :background "lemon chiffon"   :foreground "black" :weight bold)
-                  ("WAITING"   :background "lavender"        :foreground "black" :weight bold)
+                  ("COMPUTING" :background "lavender"        :foreground "black" :weight bold)
                   ("DONE"      :background "DarkOliveGreen2" :foreground "black" :weight bold)
                   ("CANCELLED" :background "DarkOliveGreen2" :foreground "black" :weight bold)
                   ("DELEGATED" :background "aquamarine2"     :foreground "black" :weight bold))))
     (setq org-tag-alist
-          '(("@comp_running" . ?r) ("@in_review" . ?v) ("@needs_review" . ?n)
-            ("@pyrene" . ?p) ("@curta" . ?c) ("@irene" . ?i) ("@capture" . ?q)
-            ("@project" . ?j)))
+          '(("@pyrene" . ?p) ("@curta" . ?c) ("@irene" . ?i) ("@project" . ?j) ("@needs_review" . ?n)))
 
     ;;
     ;; Capture
@@ -765,12 +763,29 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                      (org-agenda-sorting-strategy
                       (quote
                        (priority-down time-down)))))
-              ;;(stuck "" nil)
               (org-agenda-list-stuck-projects)
               (tags "CLOSED<=\"<-1m>\""
                     ((org-agenda-overriding-header "Items to archive (older than a month)")
                      (org-agenda-span
-                      (quote month))))))))
+                      (quote month))))))
+            ("c" "Computations"
+             ((tags-todo "TODO=\"COMPUTING\"+@curta"
+                        ((org-agenda-overriding-header "Computations Curta")
+                         (org-agenda-sorting-strategy
+                          (quote
+                           (priority-down deadline-down effort-down)))))
+              (tags-todo "TODO=\"COMPUTING\"+@pyrene"
+                          ((org-agenda-overriding-header "Computations Pyrene")
+                           (org-agenda-sorting-strategy
+                            (quote
+                             (priority-down deadline-down effort-down)))))
+              (tags-todo "TODO=\"COMPUTING\"+@irene"
+                          ((org-agenda-overriding-header "Computations TGCC")
+                           (org-agenda-sorting-strategy
+                            (quote
+                             (priority-down deadline-down effort-down)))))
+              ))
+            ))
 
     (setq org-stuck-projects
           '("+@project/-DONE-CANCELLED-DELEGATED" ;; entries considered as projects
@@ -912,7 +927,7 @@ where you whant the bibliography to appear.
           (latex biblatex)                                   ; LaTeX
           (odt . (csl "vancouver-superscript.csl"))  ; Footnote reliant
           (t basic)))
-  (setq org-cite-csl-styles-dir "/media/Datos/config/Zotero/styles/")
+  (setq org-cite-csl-styles-dir "/home/yaidel/config/ZoteroData/styles")
 
   (use-package citeproc
     :ensure t)
@@ -1074,6 +1089,27 @@ the =org-agenda-files= variable. In fact, that solution is much better than addi
 =_project= keyword in their name, but it is not possible to implement while using Denote. Because Denote do
 not uses databases, the search for all the files containing =:project:= as keyword in the org heading is not
 possible. 
+
+** Journal entries
+
+Define a function to handle the creation of the journal entry:
+
+#+begin_src emacs-lisp
+  (defun my-denote-journal ()
+    "Create an entry tagged 'journal' with the date as its title."
+    (interactive)
+    (denote
+     (format-time-string "%A %e %B %Y") ; format the note's name like Tuesday 14 June 2022
+     '("journal"))) ; multiple keywords are a list of strings: '("one" "two")
+#+end_src
+
+Bind it to a keybinding. However, every time you hit this keybinding a new note is going to be created. Have
+in mind that the identifier section of the notes will differ as they are based in the creation time up to a
+second. I prefer to create them 
+
+#+begin_src emacs-lisp
+;; (global-set-key (kbd "C-c n j") 'my-denote-journal)
+#+end_src
 
 * Markdown mode
 
