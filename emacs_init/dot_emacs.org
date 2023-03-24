@@ -651,8 +651,11 @@ When typing in the M-x, it shows a list of possibilities
 
 * ORG mode specifications
 
-Take into account that in the [[*Hugo][Hugo]] section a snippet was introduced to automatically modify the front matter
-property =lastmod= (see [[orgmode-lastmod-property-auto][here]]). It is intended for management of the modification times of the blog posts.
+Some resources to which you can refer here are:
+- [[https://orgmode.org/manual/index.html][The Org Manual]]
+- [[https://blog.jethro.dev/posts/org_mode_workflow_preview/][Jethro's org-mode workflow]]
+- [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/][Caches to Caches]] (this blog is discontinued to the best of my knowledge)
+- [[http://doc.norang.ca/org-mode.html][Bernt Hansen's guide]]
 
 ** Org mode
 
@@ -682,17 +685,16 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     :hook
     (org-mode . flyspell-mode)
     :config
-    ;; Activating Org Indent Mode by default 
-    (setq org-startup-indented t)
-    ;; Clocking projects time settings to save clocking history throughout sessions
-    (setq org-clock-persist 'history)
+
+    (setq org-startup-indented t)     ;; Activating Org Indent Mode by default 
+    ;; (setq org-adapt-indentation nil)  ;; set the identation method in ORG mode
+
+    (setq org-clock-persist 'history) ;; Clocking projects time settings to save clocking history throughout sessions
     (org-clock-persistence-insinuate)
     (setq org-clock-idle-time 10)
-    ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
-    ;; with 0:00 duration
-    (setq org-clock-out-remove-zero-time-clocks t)
+
+    (setq org-clock-out-remove-zero-time-clocks t)  ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
     (setq calendar-week-start-day 1)
-    (setq org-adapt-indentation nil) ;; set the identation method in ORG mode
 
     ;;
     ;; Tasks and Todos
@@ -710,11 +712,16 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
           '(("@pyrene" . ?p) ("@curta" . ?c) ("@irene" . ?i) ("@project" . ?j) ("@needs_review" . ?n)))
 
     ;;
+    ;; TODO states trigers
+    (setq org-todo-state-tags-triggers
+          (quote ((done ("@pyrene") ("@curta") ("@irene") ("@project") ("@needs_review")))))
+
+    ;;
     ;; Capture
     (setq org-directory "/media/Datos/notes/")
     (setq org-default-notes-file (concat org-directory organizer-file))
-    ;; use C-c c to start capture mode
-    (global-set-key (kbd "C-c c") 'org-capture)
+    (global-set-key (kbd "C-c c") 'org-capture)      ;; use C-c c to start capture mode
+
     ;; capture templates for: TODO tasks, Notes, appointments, meetings
     (setq org-templates-location-var (concat org-directory organizer-file))
     (setq org-capture-templates
