@@ -47,6 +47,12 @@ Show line numbers by default in programming mode
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
 
+Use spaces instead of TABS
+
+#+begin_src emacs-lisp
+(setq indent-tabs-mode nil)
+#+end_src
+
 ** Window startup geometry
 
 Here the frame can start maximized with the following option
@@ -114,7 +120,7 @@ Line indicator options, also employing a package maintained by [[https://protesi
 ** Auto-fill-mode for text based buffers
 
 #+begin_src emacs-lisp
- ;; (add-hook 'text-mode-hook 'auto-fill-mode)
+  (add-hook 'text-mode-hook 'auto-fill-mode)
 #+end_src
   
 ** Edit the configuration file
@@ -1053,7 +1059,7 @@ in mind that the identifier section of the notes will differ as they are based i
 second. I prefer to create them 
 
 #+begin_src emacs-lisp
-;; (global-set-key (kbd "C-c n j") 'my-denote-journal)
+  (global-set-key (kbd "C-c n j") 'my-denote-journal)
 #+end_src
 
 * Markdown mode
@@ -1201,11 +1207,11 @@ Article skeleton
 
 ** Hugo and blogging
 
-Heading for Markdown
+Heading for Markdown Hugo post using the Yugo theme
 
 #+begin_src emacs-lisp
-  (define-skeleton skeleton-md-heading-hugo-post
-    "Heading for a new post in Hugo using Org-mode"
+  (define-skeleton skeleton-md-Yugo-heading-hugo-post
+    "Heading for a new post in Hugo using Markdown and the Yugo theme"
     nil
     "---\n"
     "title: \n" _
@@ -1222,10 +1228,38 @@ Heading for Markdown
     )
 #+end_src
 
+#+begin_src emacs-lisp
+  (define-skeleton skeleton-md-PaperMod-heading-hugo-post
+    "Heading for a new post in Hugo using Markdown and the PaperMod theme"
+    nil
+    "---\n"
+    "title: \"" _ "\"\n"
+    "date: 2023-04-10\n"
+    "# weight: 1 # pin the post to the begining no matter the date\n"
+    "# aliases: [\"/alias-to-post\"]\n"
+    "tags: [\"tag1\"]\n"
+    "categories: [\"cat1\"]\n"
+    "author: [\"yaidel\"]\n"
+    "showToc: true\n"
+    "TocOpen: false\n"
+    "draft: true\n"
+    "hidemeta: false\n"
+    "description: \"Desc Text.\"\n"
+    "cover:\n"
+    "    image: \"<figure-path>\"\n"
+    "    alt: \"<alt text>\"\n"
+    "    caption: \"<text>\"\n"
+    "    relative: true # when using page bundles set this to true\n"
+    "    hidden: false # only hide on current single page\n"
+    "---\n"
+    )
+#+end_src
+
+
 Figures polaroid like in a blog post
 
 #+begin_src emacs-lisp
-  (define-skeleton skeleton-fig-polaroid
+  (define-skeleton skeleton-Hugo-fig-polaroid
     "Hugo shortcode for the images showed as Polaroid"
     nil
     

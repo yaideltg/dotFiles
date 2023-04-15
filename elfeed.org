@@ -1,0 +1,80 @@
+#+title: My RSS feed (for Elfeed)
+#+filetags: :elfeed:
+
+It is important to note that each 1st heading need to have the tag =elfeed= in order to be correctly parsed by
+the =elfeed-org= package. This means that all the entries have the =elfeed= tag.
+
+If you want to ignore one of the feeds, you do not have to delete it, just tagg it as ':ignore:'
+
+
+* Blogs                                                         :elfeed:blog:
+** Emacs                                                              :emacs:
+*** [[https://nullprogram.com/feed/][NullProgram]]
+*** [[https://sachachua.com/blog/feed/][Sacha Chua]]
+*** [[http://pragmaticemacs.com/feed/][Pragmatic Emacs]]
+*** [[https://jonhunt.uk/rss.xml][Jonhunt.uk]]
+*** [[https://emacsair.me/feed.xml][Emacsair!]]
+*** [[https://emacsredux.com/atom.xml][Emacs Redux]]
+*** [[https://emacsrocks.com/atom.xml][EmacsRocks]]
+*** [[https://blog.tecosaur.com/tmio/rss.xml][This Month in Org]]
+*** [[https://protesilaos.com/master.xml][Protesilaos]]
+*** [[https://howardism.org/index.xml][Howard Abrams]]
+** People's Blogs
+*** [[https://drewdevault.com/blog/index.xml][Drew DeVault]]
+*** [[https://lukesmith.xyz/rss.xml][Luke Smith]]
+*** [[https://notrelated.xyz/rss][NotRelated]]
+*** [[https://m-chrzan.xyz/rss.xml][Martin Chrzanowski]]
+*** [[https://mark.mcnally.je/blog/rss][Mark McNally]]
+*** [[https://chuck.is/feed.xml][Chuck]]
+*** [[https://jao.io/blog/rss.xml][Jao]]
+*** [[https://andreyorst.gitlab.io/feed.xml][Andrey Listopadov]]
+*** [[https://cestlaz.github.io/rss.xml][C'est la Z]]                                                     :ignore:
+*** [[https://batsov.com/atom.xml][Bozhidar Batsov]]
+*** [[https://lucidmanager.org/index.xml][Lucid Manager]]
+*** [[https://feeds.feedburner.com/mrmoneymustache][MMM]]
+*** [[https://kristofferbalintona.me/index.xml][Kristoffer Balintona]]
+*** [[https://zettelkasten.de/feed.atom][Zettelkasten]]
+*** [[https://sethforprivacy.com/index.xml][Seth for privacy]]
+*** [[https://kevinkle.in/index.xml][Kevyn Kle]]
+*** [[https://matthiasott.com/feed][Matthias Ott]]
+*** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
+*** [[https://thejollyteapot.com/feed.rss][The Jolly Teapot]]
+*** [[https://feeds.kottke.org/main][Kottke]]
+** Heaven Tree Webring (https://heaventree.xyz/)
+*** [[https://jacobwsmith.xyz/rss.xml][Jacob Smith]]
+*** [[https://tomfasano.net/rss.xml][Tom Fasano]]
+*** [[https://brettlindler.xyz/index.xml][Brett Lindler]]
+*** [[https://mccor.xyz/rss.xml][Jacob McCormick]]
+*** [[https://maxtroeger.xyz/rss.xml][Max Troeger]]
+** Tech blogs
+*** [[https://adamcaudill.com/index.xml][Adam Caudill]]
+*** [[https://pakstech.com/blog/index.xml][PaksTech]]
+*** [[https://www.regisphilibert.com/index.xml][Règis Philibert]]
+*** [[https://baty.net/feed][Baty]]
+*** [[https://blog.aaronbieber.com/index.xml][Aaron Bieber]]
+*** [[https://texblog.org/feed][TexBlog]]
+** Free Software
+*** [[https://stallman.org/rss/rss.xml][Richard Stallman]]                                               :ignore:
+*** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]
+*** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]
+*** [[https://blog.torproject.org/feed.xml][Tor]]
+** Services
+*** [[https://proton.me/blog/feed][Proton.me]]
+*** [[https://simplelogin.io/blog/index.xml][Simplelogin]]
+*** [[https://tutanota.com/blog/feed.xml][Tutanota]]
+*** [[https://www.getmonero.org/feed.xml][Monero]]
+** Health                                                           :health:
+*** [[https://articles.mercola.com/sites/articles/rss.aspx][Mercola]]                                                        :ignore:
+*** [[https://drjohnsblog.substack.com/feed][John Day]]                                                       :ignore:
+* Videos                                                      :videos:elfeed:
+** Documentaries like
+*** [[https://odysee.com/$/rss/@veritasium:f][Derek Muller: Veritasium]]
+*** [[https://odysee.com/$/rss/@Thoughty2:b][Thoughty2]]
+** Improvement
+*** [[https://odysee.com/$/rss/@onepercentbetter:2][One percent better]]
+** Informative
+*** [[https://odysee.com/$/rss/@AfterSkool:7][After Skool]]
+*** [[https://odysee.com/$/rss/@thetwelfthmonkey:0][TheTwelftMonkey]]
+*** [[https://odysee.com/$/rss/@AlphaNerd:8][Mental Outlaw]]
+*** [[https://videos.lukesmith.xyz/feeds/videos.xml?sort=-publishedAt&isLocal=true][Luke Smith]]
+
