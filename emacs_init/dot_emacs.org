@@ -50,7 +50,7 @@ Show line numbers by default in programming mode
 Use spaces instead of TABS
 
 #+begin_src emacs-lisp
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+end_src
 
 ** Window startup geometry
@@ -359,7 +359,7 @@ means that all the entries have the =elfeed= tag.)
     :ensure t
     :config
     (elfeed-org)
-    (setq rmh-elfeed-org-files (list "~/config/elfeed/elfeed.org"))
+    (setq rmh-elfeed-org-files (list "~/config/dotFiles/elfeed.org"))
     )
 #+end_src
 
@@ -1244,6 +1244,7 @@ Heading for Markdown Hugo post using the Yugo theme
     "TocOpen: false\n"
     "draft: true\n"
     "hidemeta: false\n"
+    "math: false\n"
     "description: \"Desc Text.\"\n"
     "cover:\n"
     "    image: \"<figure-path>\"\n"

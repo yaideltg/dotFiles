@@ -39,13 +39,13 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://matthiasott.com/feed][Matthias Ott]]
 *** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
 *** [[https://thejollyteapot.com/feed.rss][The Jolly Teapot]]
-*** [[https://feeds.kottke.org/main][Kottke]]
+*** [[https://zenhabits.net/feed/][Zen Habits]]
+*** [[https://calnewport.com/blog/feed/][Cal Newport]]
 ** Heaven Tree Webring (https://heaventree.xyz/)
 *** [[https://jacobwsmith.xyz/rss.xml][Jacob Smith]]
 *** [[https://tomfasano.net/rss.xml][Tom Fasano]]
 *** [[https://brettlindler.xyz/index.xml][Brett Lindler]]
 *** [[https://mccor.xyz/rss.xml][Jacob McCormick]]
-*** [[https://maxtroeger.xyz/rss.xml][Max Troeger]]
 ** Tech blogs
 *** [[https://adamcaudill.com/index.xml][Adam Caudill]]
 *** [[https://pakstech.com/blog/index.xml][PaksTech]]
@@ -53,6 +53,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://baty.net/feed][Baty]]
 *** [[https://blog.aaronbieber.com/index.xml][Aaron Bieber]]
 *** [[https://texblog.org/feed][TexBlog]]
+*** [[https://thelinuxcast.org/feed/feed.xml][The Linux Cast]]
 ** Free Software
 *** [[https://stallman.org/rss/rss.xml][Richard Stallman]]                                               :ignore:
 *** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]
