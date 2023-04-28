@@ -38,7 +38,10 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://kevinkle.in/index.xml][Kevyn Kle]]
 *** [[https://matthiasott.com/feed][Matthias Ott]]
 *** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
+*** [[https://cmhb.de/feed][Carl]]
 *** [[https://thejollyteapot.com/feed.rss][The Jolly Teapot]]
+*** [[https://feedpress.me/chrishannah][Chris Hannah]]
+*** [[https://holzer.online/feed.xml][Fabian Holzer]]
 *** [[https://zenhabits.net/feed/][Zen Habits]]
 *** [[https://calnewport.com/blog/feed/][Cal Newport]]
 ** Heaven Tree Webring (https://heaventree.xyz/)
@@ -67,6 +70,8 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 ** Health                                                           :health:
 *** [[https://articles.mercola.com/sites/articles/rss.aspx][Mercola]]                                                        :ignore:
 *** [[https://drjohnsblog.substack.com/feed][John Day]]                                                       :ignore:
+** Science
+*** [[https://joaquinbarroso.com/feed/][Joaquin Barroso]]
 * Videos                                                      :videos:elfeed:
 ** Documentaries like
 *** [[https://odysee.com/$/rss/@veritasium:f][Derek Muller: Veritasium]]
