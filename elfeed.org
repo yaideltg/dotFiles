@@ -8,6 +8,8 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 
 
 * Blogs                                                         :elfeed:blog:
+** Favorites
+
 ** Emacs                                                              :emacs:
 *** [[https://nullprogram.com/feed/][NullProgram]]
 *** [[https://sachachua.com/blog/feed/][Sacha Chua]]
@@ -36,7 +38,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://zettelkasten.de/feed.atom][Zettelkasten]]
 *** [[https://sethforprivacy.com/index.xml][Seth for privacy]]
 *** [[https://kevinkle.in/index.xml][Kevyn Kle]]
-*** [[https://matthiasott.com/feed][Matthias Ott]]
+*** [[https://matthiasott.com/rss][Matthias Ott]]
 *** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
 *** [[https://cmhb.de/feed][Carl]]
 *** [[https://thejollyteapot.com/feed.rss][The Jolly Teapot]]
@@ -44,16 +46,20 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://holzer.online/feed.xml][Fabian Holzer]]
 *** [[https://zenhabits.net/feed/][Zen Habits]]
 *** [[https://calnewport.com/blog/feed/][Cal Newport]]
+*** [[https://notes.ghed.in/index.xml][Rodrigo Gheding]]
+*** [[https://chriscoyier.net/feed/][Chris Coyier]]
+*** [[https://craigmod.com/index.xml][Craig Mod]]
+*** [[https://vickiboykis.com/index.xml][Vicki Boykis]]
+*** [[https://adamcaudill.com/index.xml][Adam Caudill]]
+*** [[https://baty.net/feed][Baty]]
 ** Heaven Tree Webring (https://heaventree.xyz/)
 *** [[https://jacobwsmith.xyz/rss.xml][Jacob Smith]]
 *** [[https://tomfasano.net/rss.xml][Tom Fasano]]
 *** [[https://brettlindler.xyz/index.xml][Brett Lindler]]
 *** [[https://mccor.xyz/rss.xml][Jacob McCormick]]
 ** Tech blogs
-*** [[https://adamcaudill.com/index.xml][Adam Caudill]]
 *** [[https://pakstech.com/blog/index.xml][PaksTech]]
 *** [[https://www.regisphilibert.com/index.xml][Règis Philibert]]
-*** [[https://baty.net/feed][Baty]]
 *** [[https://blog.aaronbieber.com/index.xml][Aaron Bieber]]
 *** [[https://texblog.org/feed][TexBlog]]
 *** [[https://thelinuxcast.org/feed/feed.xml][The Linux Cast]]
@@ -67,9 +73,6 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://simplelogin.io/blog/index.xml][Simplelogin]]
 *** [[https://tutanota.com/blog/feed.xml][Tutanota]]
 *** [[https://www.getmonero.org/feed.xml][Monero]]
-** Health                                                           :health:
-*** [[https://articles.mercola.com/sites/articles/rss.aspx][Mercola]]                                                        :ignore:
-*** [[https://drjohnsblog.substack.com/feed][John Day]]                                                       :ignore:
 ** Science
 *** [[https://joaquinbarroso.com/feed/][Joaquin Barroso]]
 * Videos                                                      :videos:elfeed:
