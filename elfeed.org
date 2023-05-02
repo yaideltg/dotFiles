@@ -8,8 +8,12 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 
 
 * Blogs                                                         :elfeed:blog:
-** Favorites
-
+** Favorites                                                    :favorites:
+*** [[https://matthiasott.com/rss][Matthias Ott]]
+*** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
+*** [[https://chuck.is/feed.xml][Chuck]]
+** Newly added                                                  :newlyAdded:
+*** [[https://winnielim.org/feed/][Winnie Lin]]
 ** Emacs                                                              :emacs:
 *** [[https://nullprogram.com/feed/][NullProgram]]
 *** [[https://sachachua.com/blog/feed/][Sacha Chua]]
@@ -27,7 +31,6 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://notrelated.xyz/rss][NotRelated]]
 *** [[https://m-chrzan.xyz/rss.xml][Martin Chrzanowski]]
 *** [[https://mark.mcnally.je/blog/rss][Mark McNally]]
-*** [[https://chuck.is/feed.xml][Chuck]]
 *** [[https://jao.io/blog/rss.xml][Jao]]
 *** [[https://andreyorst.gitlab.io/feed.xml][Andrey Listopadov]]
 *** [[https://cestlaz.github.io/rss.xml][C'est la Z]]                                                     :ignore:
@@ -38,8 +41,6 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://zettelkasten.de/feed.atom][Zettelkasten]]
 *** [[https://sethforprivacy.com/index.xml][Seth for privacy]]
 *** [[https://kevinkle.in/index.xml][Kevyn Kle]]
-*** [[https://matthiasott.com/rss][Matthias Ott]]
-*** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
 *** [[https://cmhb.de/feed][Carl]]
 *** [[https://thejollyteapot.com/feed.rss][The Jolly Teapot]]
 *** [[https://feedpress.me/chrishannah][Chris Hannah]]
@@ -63,16 +64,17 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://blog.aaronbieber.com/index.xml][Aaron Bieber]]
 *** [[https://texblog.org/feed][TexBlog]]
 *** [[https://thelinuxcast.org/feed/feed.xml][The Linux Cast]]
-** Free Software
+* Free Software                                                   :fs:elfeed:
 *** [[https://stallman.org/rss/rss.xml][Richard Stallman]]                                               :ignore:
 *** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]
 *** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]
 *** [[https://blog.torproject.org/feed.xml][Tor]]
-** Services
+* Services                                                  :elfeed:services:
 *** [[https://proton.me/blog/feed][Proton.me]]
 *** [[https://simplelogin.io/blog/index.xml][Simplelogin]]
 *** [[https://tutanota.com/blog/feed.xml][Tutanota]]
 *** [[https://www.getmonero.org/feed.xml][Monero]]
+*** [[https://mullvad.net/en/blog/feed/atom/][Mullvad]]
 ** Science
 *** [[https://joaquinbarroso.com/feed/][Joaquin Barroso]]
 * Videos                                                      :videos:elfeed:

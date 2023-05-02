@@ -15,13 +15,16 @@ useless. I have had some rough times debugging stuffs because they were defined 
 (setq-default custom-file null-device)
 #+end_src
 
+Set the font size
+
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :height 130) ;; Font size
+#+end_src
+
 Then some other tweaks of the interface.
 
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)   ;; Inhibits the startup bottom screen
-  (setq-default fill-column 110)
-  (set-face-attribute 'default nil :height 130) ;; Font size
-  (setq column-number-mode t)
 #+end_src
 
 Disable menubar, scrollbar, toolbar and fringe:
@@ -33,7 +36,7 @@ Disable menubar, scrollbar, toolbar and fringe:
   (scroll-bar-mode -1)
 #+end_src
 
-Some key-bindings
+Some key-bindings (see [[https://www.emacswiki.org/emacs/LineNumbers][this page]] for line-numbers configuration)
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -44,7 +47,7 @@ Some key-bindings
 Show line numbers by default in programming mode
 
 #+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  ;; (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
 
 Use spaces instead of TABS
@@ -108,7 +111,8 @@ Line indicator options, also employing a package maintained by [[https://protesi
     :config
     (setq lin-face 'lin-mac-override-fg)
     (setq lin-mode-hooks (append lin-mode-hooks '(prog-mode-hook org-mode-hook)))
-    (lin-global-mode 1))
+    ;; (lin-global-mode 1)
+    )
 #+END_SRC
 
 ** Change and 'yes or no' prompts to 'y or n':
@@ -120,9 +124,49 @@ Line indicator options, also employing a package maintained by [[https://protesi
 ** Auto-fill-mode for text based buffers
 
 #+begin_src emacs-lisp
-  (add-hook 'text-mode-hook 'auto-fill-mode)
+  ;; (add-hook 'text-mode-hook 'auto-fill-mode)
 #+end_src
-  
+
+Instead of actually changing the text of the buffer by introducing end of lines when using =auto-fill-mode=,
+it is possible to use the option =visual-line-mode=, which can be further extended with the package
+=visual-fill-column=. [[https://github.com/joostkremers/visual-fill-column][This last package]] makes possible that instead of wrapping lines at the window edge,
+which is the standard behavior of =visual-line-mode=, it wraps lines at =fill-column=.
+
+#+begin_src emacs-lisp
+  (use-package visual-fill-column
+    :ensure t
+    :config
+    (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
+    ;; (setq-default visual-fill-column-center-text t)
+    )
+#+end_src
+
+Next line activates =visual-line-mode= globally, but this will affect all buffers and that's is most of the
+time unnecessary. One can always activate it manually.
+
+#+begin_src emacs-lisp
+  ;; (global-visual-line-mode 1)
+#+end_src
+
+Next we set the columns number where to cut
+
+#+begin_src emacs-lisp
+  (setq-default fill-column 110)
+  (setq column-number-mode t)
+#+end_src
+
+And finally use the =adaptive-wrap= package to avoid that the next line, when artificially broken by
+=visual-fill-column=, be more on the left than its parent, in case the parent was indented.
+
+#+begin_src emacs-lisp
+  (use-package adaptive-wrap
+    :ensure t
+    :config
+    (add-hook 'visual-line-mode-hook #'adaptive-wrap-prefix-mode)
+    ;; (setq-default adaptive-wrap-extra-indent 1)
+    )
+#+end_src
+
 ** Edit the configuration file
 
 Set =C-c e= to edit init file:
