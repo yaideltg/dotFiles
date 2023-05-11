@@ -997,8 +997,8 @@ Facilitating the automatic loggin to the IRC server by using auth-source library
     :bind
     ("C-c n n" . denote-open-or-create)
     ("C-c n l" . denote-link-or-create)
-    ("C-c n b" . denote-link-find-file)
-    ("C-c n B" . denote-link-backlinks)
+    ("C-c n B" . denote-link-find-file)
+    ("C-c n b" . denote-link-backlinks)
     )
 #+end_src
 
@@ -1043,8 +1043,6 @@ function will never succeed in removing the file from the list.
 
 Anyhow, the files will be deleted once emacs is closed and reopened, due to the definition of
 =org-agenda-files= and =org-agenda-file-regexp= (see above).
-
-----------
 
 #+begin_src emacs-lisp
   ;; (defvar my-denote-to-agenda-regexp "_project"
@@ -1091,11 +1089,22 @@ Define a function to handle the creation of the journal entry:
 
 #+begin_src emacs-lisp
   (defun my-denote-journal ()
-    "Create an entry tagged 'journal' with the date as its title."
+    "Check if a file containing the given string exists in the 
+      directory and open it in a new buffer.
+           If the file does not exist, create it with a 'denote' string."
     (interactive)
-    (denote
-     (format-time-string "%A %e %B %Y") ; format the note's name like Tuesday 14 June 2022
-     '("journal"))) ; multiple keywords are a list of strings: '("one" "two")
+    (let* ((string (denote-sluggify (format-time-string "%A %e %B %Y")))
+           (files (denote-directory-files-matching-regexp string)))
+      (cond
+       ((> (length files) 1)
+        (find-file (completing-read "Select file: " files nil :require-match)))
+       (files
+        (find-file (car files)))
+       ;; If we reach this point, the file doesn't exist, so we create it
+       (t
+        (denote
+         (format-time-string "%A %e %B %Y") ; format the note's name like Tuesday 14 June 2022
+         '("journal"))))))
 #+end_src
 
 Bind it to a keybinding. However, every time you hit this keybinding a new note is going to be created. Have
@@ -1105,7 +1114,6 @@ second. I prefer to create them
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c n j") 'my-denote-journal)
 #+end_src
-
 * Markdown mode
 
 #+begin_src emacs-lisp
