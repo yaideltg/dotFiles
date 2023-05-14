@@ -1,0 +1,94 @@
+\RequirePackage[style=numeric-comp,%
+sorting=none,%
+maxbibnames=3,%
+minbibnames=3,%
+maxcitenames=1,%
+mincitenames=1,%
+isbn=false,%
+url=false,%
+doi=false,%
+eprint=false,%
+related=false]{biblatex}
+\renewbibmacro{in:}{}
+
+\RequirePackage{tcolorbox}
+\newtcolorbox{abox}{colback=red!5!white, colframe=red!75!black, coltitle=red!80!black,
+  fonttitle=\bfseries, title=Attention, attach title to upper={\ --\ }}
+\newtcolorbox[auto counter]{ebox}[1]{colbacktitle=blue!10!white, colback=blue!5!white,coltitle=black,
+  title={Example~\thetcbcounter \ --\ #1},fonttitle=\bfseries}
+\newtcolorbox{nbox}{colback=green!0.5!white, colframe=green!75!black, coltitle=green!80!black,
+  fonttitle=\bfseries, title=Note, attach title to upper={\ --\ }}
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+
+
+\RequirePackage[labelfont={rm},labelformat=parens,format=hang,parskip=5pt,subrefformat=subparens]{subfig}
+\RequirePackage[textfont={normalfont}, labelfont={sc,bf}, labelsep=period, parskip=1pt, aboveskip=5pt,
+indention=18pt]{caption}
+
+\RequirePackage{supertabular}
+\RequirePackage{booktabs}
+\RequirePackage{longtable}
+\RequirePackage{multirow}
+\RequirePackage[section]{placeins}
+\RequirePackage{xcolor}
+\RequirePackage[citecolor=blue, urlcolor=blue, colorlinks, linkcolor=black]{hyperref}
+\RequirePackage{varioref}
+%\labelformat{section}{secci{\'o}n~#1}
+%\labelformat{subsection}{secci{\'o}n~#1}
+%\labelformat{equation}{(#1)}
+%\labelformat{figure}{f\/igura~#1}
+%\labelformat{table}{tabla~#1}
+% Para modificar el separador de caption, ie. Figura 1. en lugar de Figura 1:
+
+
+\RequirePackage{kantlipsum}
+
+\RequirePackage{verbatim}
+\RequirePackage{shortvrb} % using \MakeShortVerb{\|} and \DeleteShortVerb{\|} you can define a new verbatim
+                          % environment setter
+
+\RequirePackage[figuresleft]{rotating}
+\RequirePackage{graphicx}
+\RequirePackage{multicol}
+\RequirePackage{geometry}
+\geometry{
+  a4paper,
+  total={150mm,240mm},
+  left=20mm,
+  %top=20mm,
+}
+\parskip=1mm
+%\parindent=0mm
+
+\RequirePackage[all]{xy}
+
+% some defined commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\raya}{\rule{2cm}{0.01cm}\\}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\sen}{\mathop{\rm sen}\nolimits}
+%\newcommand{\tanh}{\mathop{\rm tan}\nolimits}
+\newcommand{\senh}{\mathop{\rm senh}\nolimits}
+\newcommand{\arcsen}{\mathop{\rm arcsen}\nolimits}
+\newcommand{\arcsec}{\mathop{\rm arcsec}\nolimits}
+\newcommand{\bc}{\begin{center}}
+\newcommand{\ec}{\end{center}}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+\newcommand{\A}{\,\textup{\r{A}}}
+\newcommand{\C}{\,^{\circ}C}
+\newcommand{\degree}{\,^{\circ}}
+\newcommand{\erfc}{\mathop{\rm erfc}\nolimits}
+\newcommand{\erf}{\mathop{\rm erf}\nolimits}
+\newcommand{\rb}[1]{\raisebox{-.4ex}[0pt]{#1}}

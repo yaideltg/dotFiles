@@ -664,6 +664,7 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     :ensure t
     :hook
     (org-mode . flyspell-mode)
+    (org-mode . visual-line-mode)
     :config
 
     (setq org-startup-indented t)     ;; Activating Org Indent Mode by default 
@@ -983,6 +984,7 @@ Facilitating the automatic loggin to the IRC server by using auth-source library
 #+begin_src emacs-lisp
   (use-package denote
     :ensure t
+    :demand t
     :config
     ;;
     ;; General key bindings
@@ -995,7 +997,8 @@ Facilitating the automatic loggin to the IRC server by using auth-source library
     (setq denote-org-front-matter
           "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    content\n\n")
     :bind
-    ("C-c n n" . denote-open-or-create)
+    ("C-c n f" . denote-open-or-create)
+    ("C-c n n" . denote)
     ("C-c n l" . denote-link-or-create)
     ("C-c n B" . denote-link-find-file)
     ("C-c n b" . denote-link-backlinks)
@@ -1075,8 +1078,6 @@ Anyhow, the files will be deleted once emacs is closed and reopened, due to the 
   ;; (add-hook 'after-save-hook #'my-denote-remove-from-agenda)
 #+end_src
 
------------
-
 Furthermore, to those using Org-roam, https://d12frosted.io/ has a perfect solution to add files with TODOs to
 the =org-agenda-files= variable. In fact, that solution is much better than adding all files with the
 =_project= keyword in their name, but it is not possible to implement while using Denote. Because Denote do
@@ -1089,21 +1090,22 @@ Define a function to handle the creation of the journal entry:
 
 #+begin_src emacs-lisp
   (defun my-denote-journal ()
-    "Check if a file containing the given string exists in the 
-      directory and open it in a new buffer.
-           If the file does not exist, create it with a 'denote' string."
+    "Create an entry tagged 'journal' with the date as its title.
+  If a journal for the current day exists, visit it.  If multiple
+  entries exist, prompt with completion for a choice between them.
+  Else create a new file."
     (interactive)
-    (let* ((string (denote-sluggify (format-time-string "%A %e %B %Y")))
+    (let* ((today (format-time-string "%A %e %B %Y"))
+           (string (denote-sluggify today))
            (files (denote-directory-files-matching-regexp string)))
       (cond
        ((> (length files) 1)
         (find-file (completing-read "Select file: " files nil :require-match)))
        (files
         (find-file (car files)))
-       ;; If we reach this point, the file doesn't exist, so we create it
        (t
         (denote
-         (format-time-string "%A %e %B %Y") ; format the note's name like Tuesday 14 June 2022
+         today
          '("journal"))))))
 #+end_src
 

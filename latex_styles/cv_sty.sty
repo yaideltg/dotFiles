@@ -1,0 +1,131 @@
+%% PACKAGES %%
+\RequirePackage[english]{babel} % multilingual support
+\RequirePackage[utf8]{inputenc} % encoding
+
+% Set the default font
+\RequirePackage{tgpagella}
+
+% set the page layout
+\RequirePackage{geometry}
+\geometry{
+  a4paper,
+  left=20mm,
+  %right=
+  %bottom=
+  top=15mm}
+
+% empty the headers, footers, pagenumbers…
+\pagestyle{empty}
+
+% Custom sectioning with secsty
+\RequirePackage{sectsty}
+
+% For links
+\RequirePackage[citecolor=blue, urlcolor=blue, colorlinks, linkcolor=black]{hyperref}
+
+\sectionfont{%                        
+  \large % make sections smaller
+  \fontfamily{qag}\selectfont % change font family
+  \sectionrule{0pt}{0pt}{-5pt}{1pt} % insert a thin rule
+}
+
+%% BIBLIOGRAPHY FOR PAPERS %%  
+\RequirePackage[style=numeric-comp,%
+sorting=none,%
+maxbibnames=3,%
+minbibnames=3,%
+maxcitenames=1,%
+mincitenames=1,%
+isbn=false,%
+url=false,%
+doi=false,%
+eprint=false,%
+related=false]{biblatex}
+\renewbibmacro{in:}{}
+  
+%% MACROS %%
+% size of the boxes used to align text
+\newlength{\spacebox}
+\settowidth{\spacebox}{12345678912345}
+% vertical space separator between entries
+\newcommand{\sepspace}{\vspace*{1em}}
+
+% name
+\newcommand{\name}[1]{
+\Huge % font size
+\fontfamily{phv}\selectfont % font family
+% print name centered and bold
+\begin{center} \textbf{#1} \end{center}\par
+% back to normal size and font
+\normalsize\normalfont}
+
+% motto
+\newcommand{\motto}[1]{
+  \large % font size
+  \fontfamily{phv}\selectfont % font family
+% print motto centered and slanted
+  \begin{center} \textsl{#1}\end{center}\par
+% back to normal size and font
+  \normalsize \normalfont}
+
+% personal information
+\newcommand{\info}[2]{
+  % set specific indentation for personal information
+  \noindent\hangindent=2em\hangafter=0
+  % create a box to align two pieces of text
+  \parbox{\spacebox}{%
+    \textsl{#1}} % slanted entry name
+  #2 \par} % entry value
+
+% skill
+\newcommand{\skill}[2]{
+  % set specific indentation for personal information
+  \noindent\hangindent=1em\hangafter=0
+  % create a box to align two pieces of text
+  \parbox{2.5\spacebox}{% three times larger box
+    \textsc{#1}} % small caps entry name
+  #2 \par} % entry value
+
+% language level
+\newcommand{\lang}[2]{
+  % set specific indentation for personal information
+  \noindent\hangindent=2em\hangafter=0
+  % create a box to align two pieces of text
+  \parbox{\spacebox}{%
+    \textbf{#1}} % bold font entry name
+  #2 \par}    % entry value
+
+% education entry
+\newcommand{\education}[4]{
+  % name of the studies
+  \noindent  \textbf{#1}
+  % at the right the duration
+  \hfill 
+  \framebox{% duration inside a frame box
+    \parbox{7em}{%
+      \centering\textbf{#2}}} \par
+  % new paragraph with the school in italics
+  \vspace{0.5em} \noindent \textit{#3} \par
+  % description with no hanging and in smaller text
+  \vspace*{0.5em}
+  \noindent\hangindent=2em\hangafter=0 \small #4 
+  % back to normal size
+  \normalsize \par}
+
+% work experience
+\newcommand{\work}[4]{
+  % name of the work
+  \noindent  \textbf{#1}
+  % at the right the duration
+  \hfill 
+  \framebox{% duration inside a frame box
+    \parbox{7em}{%
+      \centering\textbf{#2}}} \par
+  % new paragraph with the school in italics
+  \vspace{0.5em} \noindent \textit{#3} \par
+  % description with no hanging and in smaller text
+  \vspace*{0.5em}
+  \noindent\hangindent=2em\hangafter=0 \small #4 
+  % back to normal size
+  \normalsize \par}
+

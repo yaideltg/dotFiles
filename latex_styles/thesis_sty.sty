@@ -1,0 +1,145 @@
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+
+\RequirePackage[style=numeric-comp,%
+sorting=none,%
+maxbibnames=3,%
+minbibnames=3,%
+maxcitenames=1,%
+mincitenames=1,%
+isbn=false,%
+url=false,%
+doi=false,%
+eprint=false,%
+related=false]{biblatex}
+\renewbibmacro{in:}{}
+
+\RequirePackage[labelfont={rm},labelformat=parens,format=hang,parskip=5pt]{subfig}
+\RequirePackage[textfont={normalfont}, labelfont={sc,bf}, labelsep=period, parskip=1pt, aboveskip=5pt,
+indention=18pt]{caption}
+%\RequirePackage[textfont={normalfont}, labelfont={sc,bf}, labelsep=period, parskip=1pt, aboveskip=5pt,
+%indention=18pt]{caption}
+
+\RequirePackage{supertabular}
+\RequirePackage{longtable}
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+\RequirePackage[section]{placeins}
+\RequirePackage{graphicx}
+\RequirePackage{multicol}
+\RequirePackage{xcolor}
+% colors
+\definecolor{red}{rgb}{1,0,0}
+
+\RequirePackage{verbatim}
+\RequirePackage{shortvrb} % using \MakeShortVerb{\|} and \DeleteShortVerb{\|} you can define a new verbatim
+                          % environment setter
+
+\RequirePackage{geometry}
+\geometry{
+  a4paper,
+  total={150mm,240mm},
+  left=20mm,
+  %top=20mm,
+}
+\parskip=1mm
+%\parindent=0mm
+\usepackage{setspace}
+
+\RequirePackage[all]{xy}
+
+\RequirePackage{tcolorbox}
+
+% encabezados
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhf{}
+\fancyhead[RO,LE]{\thepage}
+\fancyhead[LO]{\nouppercase{\rightmark}}	% Estilo: 1.3. Seccion primera
+\fancyhead[RE]{\nouppercase{\leftmark}}	        % Estilo: Capitulo 1. Primer Capitulo
+
+% settings
+\RequirePackage{kantlipsum}
+\RequirePackage{appendix}
+%\RequirePackage[none]{hyphenat} %para que justifique el texto, ademas hay que agregar \sloppy luego del \begin{document}
+
+% font
+%\RequirePackage[bitstream-charter]{mathdesign}
+%\RequirePackage{kpfonts}
+
+\RequirePackage{varioref}
+%\labelformat{section}{secci{\'o}n~#1}
+%\labelformat{subsection}{secci{\'o}n~#1}
+%\labelformat{equation}{(#1)}
+%\labelformat{figure}{f\/igura~#1}
+%\labelformat{table}{tabla~#1}
+% Para modificar el separador de caption, ie. Figura 1. en lugar de Figura 1:
+
+\RequirePackage[breaklinks, colorlinks=true, pdfstartview=FitV, linkcolor=black, citecolor=black,
+urlcolor=black]{hyperref}
+% \renewcommand*{\backref}[1]{}
+% \renewcommand*{\backrefalt}[4]{
+% 	\ifcase #1 (No citado.)
+% 	\or (Citado en página~#2.)
+% 	\else (Citado en páginas #2.)
+% 	\fi%
+% }
+% \renewcommand*{\backrefsep}{, }
+% \renewcommand*{\backreftwosep}{ y~}
+% \renewcommand*{\backreflastsep}{ y~}
+
+% to define depth of section in TOC
+%\setcounter{secnumdepth}{3} % para que ponga 1.1.1.1.
+%\setcounter{tocdepth}{4} % para que añadir las secciones en el índice
+
+% available levels
+% -1 = partes
+%0 = capítulos
+%1 = secciones
+%2 = subsecciones
+%3 = subsubsecciones
+%4 = párrafos
+%--------------------------------------------------------------------------------------
+
+% some defined commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\raya}{\rule{2cm}{0.01cm}\\}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\sen}{\mathop{\rm sen}\nolimits}
+%\newcommand{\tanh}{\mathop{\rm tan}\nolimits}
+\newcommand{\senh}{\mathop{\rm senh}\nolimits}
+\newcommand{\arcsen}{\mathop{\rm arcsen}\nolimits}
+\newcommand{\arcsec}{\mathop{\rm arcsec}\nolimits}
+\newcommand{\A}{\,\textup{\r{A}}}
+\newcommand{\C}{\,^{\circ}C}
+\newcommand{\degree}{\,^{\circ}}
+\newcommand{\erfc}{\mathop{\rm erfc}\nolimits}
+\newcommand{\erf}{\mathop{\rm erf}\nolimits}
+\newcommand{\rb}[1]{\raisebox{-.4ex}[0pt]{#1}}
+
+\RequirePackage{minitoc}
+
+% define white pages after chapters if needed when using openright book option
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+  \hbox{}
+  \vspace*{\fill}
+  % \begin{center}
+  %   Esta página se ha dejado en blanco intencionalmente.
+  % \end{center}
+  \vspace*{\fill}
+  \thispagestyle{empty}
+  \newpage
+  \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+
