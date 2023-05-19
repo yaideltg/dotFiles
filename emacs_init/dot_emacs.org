@@ -135,14 +135,14 @@ which is the standard behavior of =visual-line-mode=, it wraps lines at =fill-co
 #+begin_src emacs-lisp
   (use-package visual-fill-column
     :ensure t
+    :hook
+    (visual-line-mode . visual-fill-column-mode)
     :config
-    (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
     ;; (setq-default visual-fill-column-center-text t)
     )
 #+end_src
 
-Next line activates =visual-line-mode= globally, but this will affect all buffers and that's is most of the
-time unnecessary. One can always activate it manually.
+Next line activates =visual-line-mode= globally, but this will affect all buffers and that's is most of the time unnecessary. One can always activate it manually.
 
 #+begin_src emacs-lisp
   ;; (global-visual-line-mode 1)
@@ -161,9 +161,11 @@ And finally use the =adaptive-wrap= package to avoid that the next line, when ar
 #+begin_src emacs-lisp
   (use-package adaptive-wrap
     :ensure t
+    :after visual-fill-column
+    :hook
+    (visual-line-mode . adaptive-wrap-prefix-mode)
     :config
-    (add-hook 'visual-line-mode-hook #'adaptive-wrap-prefix-mode)
-    ;; (setq-default adaptive-wrap-extra-indent 1)
+    (setq-default adaptive-wrap-extra-indent 1)
     )
 #+end_src
 
@@ -1119,13 +1121,14 @@ second. I prefer to create them
 * Markdown mode
 
 #+begin_src emacs-lisp
-    (use-package markdown-mode
-      :ensure t
-      :mode ("README\\.md\\'" . gfm-mode)
-      :init (setq markdown-command "multimarkdown")
-      :hook
-      (markdown-mode . flyspell-mode)
-      )
+  (use-package markdown-mode
+    :ensure t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command "multimarkdown")
+    :hook
+    (markdown-mode . flyspell-mode)
+    (markdown-mode . visual-line-mode)
+    )
 #+end_src
 
 * Skeletons
