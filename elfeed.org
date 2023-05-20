@@ -8,12 +8,6 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 
 
 * Blogs                                                         :elfeed:blog:
-** Favorites                                                    :favorites:
-*** [[https://matthiasott.com/rss][Matthias Ott]]
-*** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
-*** [[https://chuck.is/feed.xml][Chuck]]
-** Newly added                                                  :newlyAdded:
-*** [[https://winnielim.org/feed/][Winnie Lin]]
 ** Emacs                                                              :emacs:
 *** [[https://nullprogram.com/feed/][NullProgram]]
 *** [[https://sachachua.com/blog/feed/][Sacha Chua]]
@@ -53,11 +47,15 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://vickiboykis.com/index.xml][Vicki Boykis]]
 *** [[https://adamcaudill.com/index.xml][Adam Caudill]]
 *** [[https://baty.net/feed][Baty]]
-** Heaven Tree Webring (https://heaventree.xyz/)
+*** [[https://lynnandtonicblog.com/feed/feed.xml][Lynn Fisher]]
+*** [[https://rachsmith.com/rss/][Rach Smith]]
+*** [[https://kwon.nyc/notes/index.xml][Kwon.nyc]]
+*** [[https://brainbaking.com/index.xml][Brain Baking]]
+*** [[https://winnielim.org/feed/][Winnie Lin]]
+*** [[https://matthiasott.com/rss][Matthias Ott]]
+*** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
+*** [[https://chuck.is/feed.xml][Chuck]]
 *** [[https://jacobwsmith.xyz/rss.xml][Jacob Smith]]
-*** [[https://tomfasano.net/rss.xml][Tom Fasano]]
-*** [[https://brettlindler.xyz/index.xml][Brett Lindler]]
-*** [[https://mccor.xyz/rss.xml][Jacob McCormick]]
 ** Tech blogs
 *** [[https://pakstech.com/blog/index.xml][PaksTech]]
 *** [[https://www.regisphilibert.com/index.xml][Règis Philibert]]
@@ -75,8 +73,8 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://tutanota.com/blog/feed.xml][Tutanota]]
 *** [[https://www.getmonero.org/feed.xml][Monero]]
 *** [[https://mullvad.net/en/blog/feed/atom/][Mullvad]]
-** Science
-*** [[https://joaquinbarroso.com/feed/][Joaquin Barroso]]
+* Science                                                    :science:elfeed:
+** [[https://joaquinbarroso.com/feed/][Joaquin Barroso]]
 * Videos                                                      :videos:elfeed:
 ** Documentaries like
 *** [[https://odysee.com/$/rss/@veritasium:f][Derek Muller: Veritasium]]
