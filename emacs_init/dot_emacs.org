@@ -164,8 +164,8 @@ And finally use the =adaptive-wrap= package to avoid that the next line, when ar
     :after visual-fill-column
     :hook
     (visual-line-mode . adaptive-wrap-prefix-mode)
-    ;; :config
-    ;;(setq-default adaptive-wrap-extra-indent 1)
+    :config
+    (setq-default adaptive-wrap-extra-indent 0)
     )
 #+end_src
 
@@ -667,9 +667,10 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     :hook
     (org-mode . flyspell-mode)
     (org-mode . visual-line-mode)
+    (org-mode . org-indent-mode)
     :config
 
-    (setq org-startup-indented t)     ;; Activating Org Indent Mode by default 
+    ;; (setq org-startup-indented t)     ;; Activating Org Indent Mode by default 
     ;; (setq org-adapt-indentation nil)  ;; set the identation method in ORG mode
 
     (setq org-clock-persist 'history) ;; Clocking projects time settings to save clocking history throughout sessions
