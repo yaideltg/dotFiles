@@ -46,7 +46,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://craigmod.com/index.xml][Craig Mod]]
 *** [[https://vickiboykis.com/index.xml][Vicki Boykis]]
 *** [[https://adamcaudill.com/index.xml][Adam Caudill]]
-*** [[https://baty.net/feed][Baty]]
+*** [[https://baty.net/feed][Baty]]                                                           :ignore:
 *** [[https://lynnandtonicblog.com/feed/feed.xml][Lynn Fisher]]
 *** [[https://rachsmith.com/rss/][Rach Smith]]
 *** [[https://kwon.nyc/notes/index.xml][Kwon.nyc]]
@@ -56,7 +56,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
 *** [[https://chuck.is/feed.xml][Chuck]]
 *** [[https://jacobwsmith.xyz/rss.xml][Jacob Smith]]
-*** [[https://kimberlyhirsh.com/feed.xml][Kimberly Hirsh]]
+*** [[https://kimberlyhirsh.com/feed.xml][Kimberly Hirsh]]                                                 :ignore:
 *** [[https://flower.codes/feed.xml][Flower.Codes]]
 *** [[https://tilde.town/~dustin/index.xml][Dustin]]
 *** [[https://anhvn.com/feed.xml][anhvn]]
@@ -64,17 +64,24 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://mnmlist.me/feed/][Mnmlist]]
 *** [[https://rebeccatoh.co/feed/][Rebecca Toh]]
 *** [[https://robhope.com/feed][Rob Hope]]
+*** [[https://www.armindarvish.com/en/index.xml][Armin Darvish]]
+** Blogs en Español
+*** [[https://antoniosimon.site/feed/][Antonio Simon]]
 ** Tech blogs
 *** [[https://pakstech.com/blog/index.xml][PaksTech]]
 *** [[https://www.regisphilibert.com/index.xml][Règis Philibert]]
 *** [[https://blog.aaronbieber.com/index.xml][Aaron Bieber]]
 *** [[https://texblog.org/feed][TexBlog]]
 *** [[https://thelinuxcast.org/feed/feed.xml][The Linux Cast]]
+*** [[https://mertbakir.gitlab.io/index.xml][Mert Bakir]]
 * Free Software                                                   :fs:elfeed:
 *** [[https://stallman.org/rss/rss.xml][Richard Stallman]]                                               :ignore:
 *** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]
 *** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]
 *** [[https://blog.torproject.org/feed.xml][Tor]]
+* Cuba                                                          :cuba:elfeed:
+** Revistas
+*** [[https://hypermediamagazine.com/feed/][Hyper Media Magazine]]
 * Services                                                  :elfeed:services:
 *** [[https://proton.me/blog/feed][Proton.me]]
 *** [[https://simplelogin.io/blog/index.xml][Simplelogin]]

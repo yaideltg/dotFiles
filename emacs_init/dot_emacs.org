@@ -137,8 +137,6 @@ which is the standard behavior of =visual-line-mode=, it wraps lines at =fill-co
     :ensure t
     :hook
     (visual-line-mode . visual-fill-column-mode)
-    :config
-    ;; (setq-default visual-fill-column-center-text t)
     )
 #+end_src
 
@@ -348,8 +346,7 @@ Show file sizes in KB, MB, GB instead of just bytes:
   (setq-default dired-listing-switches "-alh")
 #+END_SRC
 
-Delete the previous buffer each time a new folder is entered. This way you do not end up with several buffers
-opened, one for each folder you visited.
+Delete the previous buffer each time a new folder is entered. This way you do not end up with several buffers opened, one for each folder you visited.
 
 #+begin_src emacs-lisp
 (setq dired-kill-when-opening-new-dired-buffer t)
@@ -473,6 +470,13 @@ When typing in the M-x, it shows a list of possibilities
     :config
     (which-key-mode))
 #+END_SRC
+** Try
+
+#+begin_src emacs-lisp
+  (use-package try
+    :ensure t
+    )
+#+end_src
 
 * Autocomplete
 #+BEGIN_SRC emacs-lisp
@@ -670,7 +674,6 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     (org-mode . org-indent-mode)
     :config
 
-    ;; (setq org-startup-indented t)     ;; Activating Org Indent Mode by default 
     ;; (setq org-adapt-indentation nil)  ;; set the identation method in ORG mode
 
     (setq org-clock-persist 'history) ;; Clocking projects time settings to save clocking history throughout sessions
@@ -888,7 +891,6 @@ Enable Markdown export back-end (see [[https://orgmode.org/manual/Exporting.html
 #+begin_src emacs-lisp
 (require 'ox-md)
 #+end_src
-
 * Org-cite and citations handling
 To configure the citations within Org, we have its Org-cite functionality. More information about this
 functionality can be found in the follwoing sources:
