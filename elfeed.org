@@ -46,7 +46,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://craigmod.com/index.xml][Craig Mod]]
 *** [[https://vickiboykis.com/index.xml][Vicki Boykis]]
 *** [[https://adamcaudill.com/index.xml][Adam Caudill]]
-*** [[https://baty.net/feed][Baty]]                                                           :ignore:
+*** [[https://baty.net/feed.rss][Baty]]                                                           :ignore:
 *** [[https://lynnandtonicblog.com/feed/feed.xml][Lynn Fisher]]
 *** [[https://rachsmith.com/rss/][Rach Smith]]
 *** [[https://kwon.nyc/notes/index.xml][Kwon.nyc]]
@@ -65,6 +65,9 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://rebeccatoh.co/feed/][Rebecca Toh]]
 *** [[https://robhope.com/feed][Rob Hope]]
 *** [[https://www.armindarvish.com/en/index.xml][Armin Darvish]]
+*** [[https://tomcritchlow.com/feed][Tom Critchlow]]
+*** [[https://swtlo.com/feed/][Swimming With the Light On]]
+*** [[https://mattgemmell.scot/atom.xml][Matt Gemmell]]                                                 :favorito:
 ** Blogs en Español
 *** [[https://antoniosimon.site/feed/][Antonio Simon]]
 ** Tech blogs
@@ -81,7 +84,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://blog.torproject.org/feed.xml][Tor]]
 * Cuba                                                          :cuba:elfeed:
 ** Revistas
-*** [[https://hypermediamagazine.com/feed/][Hyper Media Magazine]]
+*** [[https://hypermediamagazine.com/feed/][Hyper Media Magazine]]                                           :ignore:
 * Services                                                  :elfeed:services:
 *** [[https://proton.me/blog/feed][Proton.me]]
 *** [[https://simplelogin.io/blog/index.xml][Simplelogin]]
