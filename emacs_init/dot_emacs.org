@@ -754,11 +754,11 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                            (quote
                             (priority-down deadline-down effort-down)))
                           (org-agenda-max-entries 5)))
-              (agenda ""
-                      ((org-agenda-overriding-header "The Week in a Glance:")
-                       (org-agenda-sorting-strategy
-                        (quote
-                         (time-up deadline-down priority-down)))))
+              ;; (agenda ""
+              ;;         ((org-agenda-overriding-header "The Week in a Glance:")
+              ;;          (org-agenda-sorting-strategy
+              ;;           (quote
+              ;;            (time-up deadline-down priority-down)))))
               (tags "+@capture-@excludeFromAgenda"
                     ((org-agenda-overriding-header "Items to refile")
                      ;;(org-tags-match-list-sublevels nil)
