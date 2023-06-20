@@ -737,18 +737,18 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                           (org-agenda-sorting-strategy
                            (quote
                             (time-up deadline-down priority-down)))))
-              (tags-todo "TODO=\"WORKING\""
+              (tags-todo "-@project/+WORKING"
                          ((org-agenda-overriding-header "Tasks in progress")
                           (org-agenda-sorting-strategy
                            (quote
                             (priority-down deadline-down effort-down)))))
-              (tags-todo "TODO=\"NEXT\""
+              (tags-todo "-@project/+NEXT"
                          ((org-agenda-overriding-header "Next tasks")
                           (org-agenda-sorting-strategy
                            (quote
                             (priority-down deadline-down effort-down)))
                           (org-agenda-max-entries 5)))
-              (tags-todo "TODO=\"TODO\""
+              (tags-todo "-@project/+TODO"
                          ((org-agenda-overriding-header "TODOs")
                           (org-agenda-sorting-strategy
                            (quote
@@ -786,6 +786,19 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                            (org-agenda-sorting-strategy
                             (quote
                              (priority-down deadline-down effort-down)))))
+              ))
+            ("p" "Projects"
+             ((tags-todo "+@project/-DELEGATED-DONE-CANCELLED"
+                    ((org-agenda-overriding-header "Working on:")
+                     (org-agenda-sorting-strategy
+                      (quote
+                       (priority-down deadline-down effort-down)))))
+              (tags-todo "@project+@someday/-DELEGATED-DONE-CANCELLED"
+                         ((org-agenda-overriding-header "Future Projects:")
+                          (org-agenda-sorting-strategy
+                           (quote
+                            (priority-down deadline-down effort-down)))))
+              (org-agenda-list-stuck-projects)
               ))
             ))
 
