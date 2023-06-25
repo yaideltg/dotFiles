@@ -51,7 +51,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://rachsmith.com/rss/][Rach Smith]]
 *** [[https://kwon.nyc/notes/index.xml][Kwon.nyc]]
 *** [[https://brainbaking.com/index.xml][Brain Baking]]
-*** [[https://winnielim.org/feed/][Winnie Lin]]
+*** [[https://winnielim.org/feed/][Winnie Lin]]                                                     :ignore:
 *** [[https://matthiasott.com/rss][Matthias Ott]]
 *** [[https://manuelmoreale.com/feed/rss][Manuel Moreale]]
 *** [[https://chuck.is/feed.xml][Chuck]]

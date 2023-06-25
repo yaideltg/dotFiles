@@ -521,26 +521,27 @@ When typing in the M-x, it shows a list of possibilities
   ;;   (progn
   ;;     (setq jedi:environment-root "jedi")  ; or any other name you like
   ;;     (setq jedi:environment-virtualenv
-  ;; 	  (append python-environment-virtualenv
-  ;; 		  '("--python" "/usr/bin/python3")))
+  ;;           (append python-environment-virtualenv
+  ;;                   '("--python" "/usr/bin/python3")))
   ;;     (setq jedi:complete-on-dot t)
   ;;     (setq jedi:get-in-function-call-delay 1)
   ;;     ))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  ;; (defcustom python-shell-interpreter "python3"
-  ;;   "Default Python interpreter for shell."
-  ;;   :type 'string
-  ;;   :group 'python)
+  (defcustom python-shell-interpreter "python3"
+    "Default Python interpreter for shell."
+    :type 'string
+    :group 'python)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  ;; ;; It is a package for documentation, completion, syntax check ...
-  ;; (use-package elpy
-  ;;   :ensure t
-  ;;   :config
-  ;;   (elpy-enable))
+  ;; It is a package for documentation, completion, syntax check ...
+  (use-package elpy
+    :ensure t
+    :config
+    (elpy-enable)
+    (setq python-indent-offset 4))
 #+END_SRC
 
 * Latex
@@ -550,7 +551,7 @@ When typing in the M-x, it shows a list of possibilities
     :ensure auctex
     :ensure reftex
     :hook ((LaTeX-mode . flyspell-mode)
-           (LaTeX-mode . turn-on-auto-fill)
+           (LaTeX-mode . visual-line-mode)
            (LaTeX-mode . LaTeX-math-mode)
            (LaTeX-mode . turn-on-reftex)
            ;; (LaTeX-mode . prettify-symbols-mode) ; Para que salgan los simbolos en lugar de codigos
