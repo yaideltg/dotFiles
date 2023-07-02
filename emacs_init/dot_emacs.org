@@ -15,12 +15,6 @@ useless. I have had some rough times debugging stuffs because they were defined 
 (setq-default custom-file null-device)
 #+end_src
 
-Set the font size
-
-#+begin_src emacs-lisp
-  (set-face-attribute 'default nil :height 130) ;; Font size
-#+end_src
-
 Then some other tweaks of the interface.
 
 #+begin_src emacs-lisp
@@ -32,7 +26,7 @@ Disable menubar, scrollbar, toolbar and fringe:
 #+begin_src emacs-lisp
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  (fringe-mode -1)
+  ;; (fringe-mode -1)
   (scroll-bar-mode -1)
 #+end_src
 
@@ -61,15 +55,15 @@ Use spaces instead of TABS
 Here the frame can start maximized with the following option
 
 #+begin_src emacs-lisp
-  (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+ ;; (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 #+end_src
 
 Or it can be set to a certain geometry with the following options
 
 #+begin_src emacs-lisp
-  ;; (setq default-frame-alist
-  ;;       '((top . 200) (left . 400)
-  ;; 	(width . 140) (height . 40)))
+  (setq default-frame-alist
+        '((top . 60) (left . 150)
+          (width . 160) (height . 42)))
 #+end_src
 
 ** Theme
@@ -88,6 +82,90 @@ my case I am using the =ef-themes= because they are really colorful (in a balanc
 	  ef-themes-variable-pitch-ui t)
     ;; Load the theme of choice:
     (load-theme 'ef-light :no-confirm)
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package spacious-padding
+    :ensure t
+    :config
+    (spacious-padding-mode 1)
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package fontaine
+    :ensure t
+    :config
+
+    (setq fontaine-latest-state-file
+          (locate-user-emacs-file "fontaine-latest-state.eld"))
+  
+    (setq fontaine-presets
+          '((tiny
+             :default-family "Iosevka Comfy Wide Fixed"
+             :default-height 70)
+            (small
+             :default-family "Iosevka Comfy Fixed"
+             :default-height 90)
+            (regular
+             :default-height 130)
+            (medium
+             :default-height 150)
+            (large
+             :default-weight semilight
+             :default-height 170
+             :bold-weight extrabold)
+            (presentation
+             :default-weight semilight
+             :default-height 170
+             :bold-weight extrabold)
+            (jumbo
+             :default-weight semilight
+             :default-height 220
+             :bold-weight extrabold)
+            (t
+             ;; I keep all properties for didactic purposes, but most can be
+             ;; omitted.  See the fontaine manual for the technicalities:
+             ;; <https://protesilaos.com/emacs/fontaine>.
+             :default-family "Iosevka Comfy"
+             :default-weight regular
+             :default-height 100
+             :fixed-pitch-family nil ; falls back to :default-family
+             :fixed-pitch-weight nil ; falls back to :default-weight
+             :fixed-pitch-height 1.0
+             :fixed-pitch-serif-family nil ; falls back to :default-family
+             :fixed-pitch-serif-weight nil ; falls back to :default-weight
+             :fixed-pitch-serif-height 1.0
+             :variable-pitch-family "Iosevka Comfy Duo"
+             :variable-pitch-weight nil
+             :variable-pitch-height 1.0
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family nil
+             :italic-slant italic
+             :line-spacing nil)))
+
+    ;; Recover last preset or fall back to desired style from
+    ;; `fontaine-presets'.
+    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+
+    ;; The other side of `fontaine-restore-latest-preset'.
+    (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package pulsar
+    :ensure t
+    :config
+    (setq pulsar-pulse t)
+    (setq pulsar-delay 0.075)
+    (setq pulsar-iterations 10)
+    (setq pulsar-face 'pulsar-magenta)
+    (setq pulsar-highlight-face 'pulsar-yellow)
+
+    (pulsar-global-mode 1)
     )
 #+end_src
 
@@ -132,9 +210,11 @@ Instead of actually changing the text of the buffer by introducing end of lines 
 #+begin_src emacs-lisp
   (use-package visual-fill-column
     :ensure t
-    :hook
-    (visual-line-mode . visual-fill-column-mode)
     )
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<f6>") 'visual-fill-column-mode)
 #+end_src
 
 Next line activates =visual-line-mode= globally, but this will affect all buffers and that's is most of the time unnecessary. One can always activate it manually.
@@ -199,6 +279,20 @@ Reload init file when =C-c r= is pressed:
 	 ((t (:inherit ace-jump-face-foreground :height 2.0)))))
       ))
 #+END_SRC
+
+Winner is a global minor mode built into Emacs that records the changes in the window configuration. It basically provides two functions:
+1. =winner-undo=, by default bind to =C-c left=.
+2. =winner-redo=, by default bind to =C-c right=.
+
+Let's say we have a frame with one window (state 1), and we split it vertically (state 2) and then horizontally (state 3). If we call =winner-undo=, we will undo the last modification we did to the frame, which means that we will have two vertical windows (return to state 2). If we call once more =winner-undo=, we will return to the first state, with only one window in the frame. Then, we can return to state 3 by invoking =winner-redo= two times.
+
+To enable =winner-mode= we need to customize the variable as follows:
+
+#+begin_src emacs-lisp
+  (winner-mode 1)
+#+end_src
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenience.html#index-winner_002dmode][official GNU/Emacs documentation]] or the [[https://www.emacswiki.org/emacs/WinnerMode][Emacs Wiki dedicated page]].
 
 * Searching and helping to find things
 ** Vertico configuration
@@ -554,7 +648,6 @@ When typing in the M-x, it shows a list of possibilities
            (LaTeX-mode . visual-line-mode)
            (LaTeX-mode . LaTeX-math-mode)
            (LaTeX-mode . turn-on-reftex)
-           ;; (LaTeX-mode . prettify-symbols-mode) ; Para que salgan los simbolos en lugar de codigos
            )
     :config
     (setq TeX-parse-self t)
@@ -567,6 +660,7 @@ When typing in the M-x, it shows a list of possibilities
     (setq reftex-plug-into-AUCTeX t)
     (setq bibtex-dialect 'biblatex)
     (setq reftex-cite-format 'biblatex)
+    (setq reftex-default-bibliography '("/home/yaidel/config/latex_bib_databases/entireLibrary.bib"))
     (setq LaTeX-section-hook
           '(LaTeX-section-heading
             LaTeX-section-title
@@ -574,8 +668,8 @@ When typing in the M-x, it shows a list of possibilities
             LaTeX-section-section
             LaTeX-section-label))
 
-    (eval-after-load "tex" '(progn
-                              (setq LaTeX-command (concat LaTeX-command " -shell-escape"))))
+    ;; (eval-after-load "tex" '(progn
+    ;;                          (setq LaTeX-command (concat LaTeX-command " -shell-escape"))))
     ;; Don't forget to configure
     ;; Okular to use emacs in
     ;; "Configuration/Configure Okular/Editor"
@@ -666,154 +760,155 @@ The =org-agenda-files= configuration has been written in the section [[*Adding _
 because it uses [[*Denote][Denote's]] tags in the file name to detect the project files and add them to the list.
 
 #+begin_src emacs-lisp
-  (use-package org
-    :ensure t
-    :hook
-    (org-mode . flyspell-mode)
-    (org-mode . visual-line-mode)
-    (org-mode . org-indent-mode)
-    :config
+    (use-package org
+      :ensure t
+      :hook
+      (org-mode . flyspell-mode)
+      (org-mode . visual-line-mode)
+      (org-mode . org-indent-mode)
+      :config
 
-    ;; (setq org-adapt-indentation nil)  ;; set the identation method in ORG mode
+      ;; (setq org-adapt-indentation nil)  ;; set the identation method in ORG mode
 
-    (setq org-clock-persist 'history) ;; Clocking projects time settings to save clocking history throughout sessions
-    (org-clock-persistence-insinuate)
-    (setq org-clock-idle-time 10)
+      (setq org-clock-persist 'history) ;; Clocking projects time settings to save clocking history throughout sessions
+      (org-clock-persistence-insinuate)
+      (setq org-clock-idle-time 10)
 
-    (setq org-clock-out-remove-zero-time-clocks t)  ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
-    (setq calendar-week-start-day 1)
+      (setq org-clock-out-remove-zero-time-clocks t)  ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+      (setq calendar-week-start-day 1)
 
-    ;;
-    ;; Tasks and Todos
-    (setq org-todo-keywords
-          '((sequence "TODO" "NEXT" "WORKING" "DELEGATED" "COMPUTING" "|" "DONE" "CANCELLED")))
-    (setq org-todo-keyword-faces
-          (quote (("TODO"      :background "IndianRed1"      :foreground "black" :weight bold)
-                  ("NEXT"      :background "sky blue"        :foreground "black" :weight bold)
-                  ("WORKING"   :background "lemon chiffon"   :foreground "black" :weight bold)
-                  ("COMPUTING" :background "lavender"        :foreground "black" :weight bold)
-                  ("DONE"      :background "DarkOliveGreen2" :foreground "black" :weight bold)
-                  ("CANCELLED" :background "DarkOliveGreen2" :foreground "black" :weight bold)
-                  ("DELEGATED" :background "aquamarine2"     :foreground "black" :weight bold))))
-    (setq org-tag-alist
-          '(("@pyrene" . ?p) ("@curta" . ?c) ("@irene" . ?i) ("@project" . ?j) ("@someday" . ?s)))
+      ;;
+      ;; Tasks and Todos
+      (setq org-todo-keywords
+            '((sequence "TODO(t)" "NEXT(n)" "WORKING(w)" "DELEGATED(g)" "|" "DONE(d)" "CANCELLED(c)")
+              (sequence "COMPUTING(p)" "|" "FINISHED(f)" "UNFINISHED(u)")))
+      (setq org-todo-keyword-faces
+            (quote (("TODO"      :background "IndianRed1"      :foreground "black" :weight bold)
+                    ("NEXT"      :background "sky blue"        :foreground "black" :weight bold)
+                    ("WORKING"   :background "lemon chiffon"   :foreground "black" :weight bold)
+                    ;;("COMPUTING" :background "lavender"        :foreground "black" :weight bold)
+                    ("DONE"      :background "DarkOliveGreen2" :foreground "black" :weight bold)
+                    ("CANCELLED" :background "DarkOliveGreen2" :foreground "black" :weight bold)
+                    ("DELEGATED" :background "aquamarine2"     :foreground "black" :weight bold))))
+      (setq org-tag-alist
+            '(("@pyrene" . ?p) ("@curta" . ?c) ("@irene" . ?i) ("@project" . ?j) ("@someday" . ?s)))
 
-    ;;
-    ;; TODO states trigers
-    (setq org-todo-state-tags-triggers
-          (quote ((done ("@pyrene") ("@curta") ("@irene") ("@project") ("@someday")))))
+      ;;
+      ;; TODO states trigers
+      (setq org-todo-state-tags-triggers
+            (quote ((done ("@pyrene") ("@curta") ("@irene") ("@project") ("@someday")))))
 
-    ;;
-    ;; Capture
-    (setq org-directory "/media/Datos/notes/")
-    (setq org-default-notes-file (concat org-directory organizer-file))
-    (global-set-key (kbd "C-c c") 'org-capture)      ;; use C-c c to start capture mode
+      ;;
+      ;; Capture
+      (setq org-directory "/media/Datos/notes/")
+      (setq org-default-notes-file (concat org-directory organizer-file))
+      (global-set-key (kbd "C-c c") 'org-capture)      ;; use C-c c to start capture mode
 
-    ;; capture templates for: TODO tasks, Notes, appointments, meetings
-    (setq org-templates-location-var (concat org-directory organizer-file))
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline org-templates-location-var "Inbox")
-             "* TODO [#C] %? \nCaptured on %U")))
+      ;; capture templates for: TODO tasks, Notes, appointments, meetings
+      (setq org-templates-location-var (concat org-directory organizer-file))
+      (setq org-capture-templates
+            '(("t" "Todo" entry (file+headline org-templates-location-var "Inbox")
+               "* TODO [#C] %? \nCaptured on %U")))
 
-    ;; Refile
-    ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-    ;; C-c C-w for refile
-    (setq org-refile-targets (quote ((nil :maxlevel . 3)
-                                     (org-agenda-files :maxlevel . 3))))
-    ;;
-    ;; Agenda customization
-    ;;
-    (global-set-key (kbd "C-c a") 'org-agenda)
-    ;;
-    ;; Format of the columns in the agenda view
-    (setq org-columns-default-format-for-agenda "%65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)")
+      ;; Refile
+      ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+      ;; C-c C-w for refile
+      (setq org-refile-targets (quote ((nil :maxlevel . 3)
+                                       (org-agenda-files :maxlevel . 3))))
+      ;;
+      ;; Agenda customization
+      ;;
+      (global-set-key (kbd "C-c a") 'org-agenda)
+      ;;
+      ;; Format of the columns in the agenda view
+      (setq org-columns-default-format-for-agenda "%65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)")
 
-    (setq org-agenda-custom-commands
-          '(("x" "My Agenda"  
-             ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                          (org-agenda-span 'day)
-                          (org-agenda-ndays 1)
-                          (org-agenda-start-on-weekday nil)
-                          (org-agenda-start-day "+0d")
-                          (org-agenda-sorting-strategy
-                           (quote
-                            (time-up deadline-down priority-down)))))
-              (tags-todo "-@project/+WORKING"
-                         ((org-agenda-overriding-header "Tasks in progress")
-                          (org-agenda-sorting-strategy
-                           (quote
-                            (priority-down deadline-down effort-down)))))
-              (tags-todo "-@project/+NEXT"
-                         ((org-agenda-overriding-header "Next tasks")
-                          (org-agenda-sorting-strategy
-                           (quote
-                            (priority-down deadline-down effort-down)))
-                          (org-agenda-max-entries 5)))
-              (tags-todo "-@project/+TODO"
-                         ((org-agenda-overriding-header "TODOs")
-                          (org-agenda-sorting-strategy
-                           (quote
-                            (priority-down deadline-down effort-down)))
-                          (org-agenda-max-entries 5)))
-              ;; (agenda ""
-              ;;         ((org-agenda-overriding-header "The Week in a Glance:")
-              ;;          (org-agenda-sorting-strategy
-              ;;           (quote
-              ;;            (time-up deadline-down priority-down)))))
-              (tags "+@capture-@excludeFromAgenda"
-                    ((org-agenda-overriding-header "Items to refile")
-                     ;;(org-tags-match-list-sublevels nil)
-                     (org-agenda-sorting-strategy
-                      (quote
-                       (priority-down time-down)))))
-              (org-agenda-list-stuck-projects)
-              (tags "CLOSED<=\"<-1m>\""
-                    ((org-agenda-overriding-header "Items to archive (older than a month)")
-                     (org-agenda-span
-                      (quote month))))))
-            ("c" "Computations"
-             ((tags-todo "TODO=\"COMPUTING\"+@curta"
-                        ((org-agenda-overriding-header "Computations Curta")
-                         (org-agenda-sorting-strategy
-                          (quote
-                           (priority-down deadline-down effort-down)))))
-              (tags-todo "TODO=\"COMPUTING\"+@pyrene"
-                          ((org-agenda-overriding-header "Computations Pyrene")
+      (setq org-agenda-custom-commands
+            '(("x" "My Agenda"  
+               ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                            (org-agenda-span 'day)
+                            (org-agenda-ndays 1)
+                            (org-agenda-start-on-weekday nil)
+                            (org-agenda-start-day "+0d")
+                            (org-agenda-sorting-strategy
+                             (quote
+                              (time-up deadline-down priority-down)))))
+                (tags-todo "-@project/+WORKING"
+                           ((org-agenda-overriding-header "Tasks in progress")
+                            (org-agenda-sorting-strategy
+                             (quote
+                              (priority-down deadline-down effort-down)))))
+                (tags-todo "-@project/+NEXT"
+                           ((org-agenda-overriding-header "Next tasks")
+                            (org-agenda-sorting-strategy
+                             (quote
+                              (priority-down deadline-down effort-down)))
+                            (org-agenda-max-entries 5)))
+                (tags-todo "-@project/+TODO"
+                           ((org-agenda-overriding-header "TODOs")
+                            (org-agenda-sorting-strategy
+                             (quote
+                              (priority-down deadline-down effort-down)))
+                            (org-agenda-max-entries 5)))
+                ;; (agenda ""
+                ;;         ((org-agenda-overriding-header "The Week in a Glance:")
+                ;;          (org-agenda-sorting-strategy
+                ;;           (quote
+                ;;            (time-up deadline-down priority-down)))))
+                (tags "+@capture-@excludeFromAgenda"
+                      ((org-agenda-overriding-header "Items to refile")
+                       ;;(org-tags-match-list-sublevels nil)
+                       (org-agenda-sorting-strategy
+                        (quote
+                         (priority-down time-down)))))
+                (org-agenda-list-stuck-projects)
+                (tags "CLOSED<=\"<-1m>\""
+                      ((org-agenda-overriding-header "Items to archive (older than a month)")
+                       (org-agenda-span
+                        (quote month))))))
+              ("c" "Computations"
+               ((tags-todo "TODO=\"COMPUTING\"+@curta"
+                          ((org-agenda-overriding-header "Computations Curta")
                            (org-agenda-sorting-strategy
                             (quote
                              (priority-down deadline-down effort-down)))))
-              (tags-todo "TODO=\"COMPUTING\"+@irene"
-                          ((org-agenda-overriding-header "Computations TGCC")
-                           (org-agenda-sorting-strategy
-                            (quote
-                             (priority-down deadline-down effort-down)))))
+                (tags-todo "TODO=\"COMPUTING\"+@pyrene"
+                            ((org-agenda-overriding-header "Computations Pyrene")
+                             (org-agenda-sorting-strategy
+                              (quote
+                               (priority-down deadline-down effort-down)))))
+                (tags-todo "TODO=\"COMPUTING\"+@irene"
+                            ((org-agenda-overriding-header "Computations TGCC")
+                             (org-agenda-sorting-strategy
+                              (quote
+                               (priority-down deadline-down effort-down)))))
+                ))
+              ("p" "Projects"
+               ((tags-todo "+@project/-DELEGATED-DONE-CANCELLED"
+                      ((org-agenda-overriding-header "Working on:")
+                       (org-agenda-sorting-strategy
+                        (quote
+                         (priority-down deadline-down effort-down)))))
+                (tags-todo "@project+@someday/-DELEGATED-DONE-CANCELLED"
+                           ((org-agenda-overriding-header "Future Projects:")
+                            (org-agenda-sorting-strategy
+                             (quote
+                              (priority-down deadline-down effort-down)))))
+                (org-agenda-list-stuck-projects)
+                ))
               ))
-            ("p" "Projects"
-             ((tags-todo "+@project/-DELEGATED-DONE-CANCELLED"
-                    ((org-agenda-overriding-header "Working on:")
-                     (org-agenda-sorting-strategy
-                      (quote
-                       (priority-down deadline-down effort-down)))))
-              (tags-todo "@project+@someday/-DELEGATED-DONE-CANCELLED"
-                         ((org-agenda-overriding-header "Future Projects:")
-                          (org-agenda-sorting-strategy
-                           (quote
-                            (priority-down deadline-down effort-down)))))
-              (org-agenda-list-stuck-projects)
-              ))
-            ))
 
-    (setq org-stuck-projects
-          '("+@project/-DONE-CANCELLED-DELEGATED"   ;; entries considered as projects
-            ("NEXT" "WORKING")                      ;; if none of these are present in the subtree, the project is stuck
-            ("@someday")                            ;; list of tags identifying non-stuck projects
-            ""))                                    ;; arbitrary regular expression matching non-stuck projects
+      (setq org-stuck-projects
+            '("+@project/-DONE-CANCELLED-DELEGATED"   ;; entries considered as projects
+              ("NEXT" "WORKING")                      ;; if none of these are present in the subtree, the project is stuck
+              ("@someday")                            ;; list of tags identifying non-stuck projects
+              ""))                                    ;; arbitrary regular expression matching non-stuck projects
 
-    ;; as the @project tag defines what is a project, I do not want all the sub-trees are marked also as projects
-    ;; I want to manually set what are the projects 
-    (setq org-tags-exclude-from-inheritance '("@project" "project" "blog" "@excludeFromAgenda"))
+      ;; as the @project tag defines what is a project, I do not want all the sub-trees are marked also as projects
+      ;; I want to manually set what are the projects 
+      (setq org-tags-exclude-from-inheritance '("@project" "project" "blog" "@excludeFromAgenda"))
 
-    )
+      )
 #+end_src
 
 Furthermore, to automatically set the values displayed in the agenda identifying the file from where the task is being pulled from to the "humanized" name of the file in the file-system, Boris Buliga proposed the following configuration in [[https://d12frosted.io/posts/2020-06-24-task-management-with-roam-vol2.html][this blog post]]. Nevertheless, after some time using it, I removed it from my configuration. A simpler solution is just to specify the =#+category:= value in the heading of the =org= file
@@ -1024,7 +1119,7 @@ Facilitating the automatic loggin to the IRC server by using auth-source library
     ;;
     ;; Tweaking the frontmatter
     (setq denote-org-front-matter
-          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    content\n\n")
+          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    showall\n\n")
     :bind
     ("C-c n f" . denote-open-or-create)
     ("C-c n n" . denote)
@@ -1271,7 +1366,7 @@ Article skeleton
     "The skeleton of an article in LaTeX"
     nil
     "\\documentclass{article}\n"
-    "\\usepackage{/home/yaidel/config/latex_styles/article_sty}\n"
+    "\\usepackage{/home/yaidel/config/dotFiles/latex_styles/article_sty}\n"
     "\\addbibresource{/home/yaidel/config/latex_bib_databases/entireLibrary.bib}\n"
     "\n"
     "\\title{}\n"
@@ -1351,4 +1446,11 @@ Figures polaroid like in a blog post
     "{{< img class=\"polaroidImage\" width=\"50%\" src=\"image.png\" caption=\"Caption\" link=\"https://poview.org\" alt=\"Alternative text\" mouse=\"Mouse over\" >}}\n"
     )
 #+end_src
+
+* Packages I want to try and probably use
+- PDFTools: https://github.com/vedang/pdf-tools
+- Org-noter: https://github.com/weirdNox/org-noter
+- Org-Download: https://github.com/abo-abo/org-download
+- Org-Protocol: https://orgmode.org/worg/org-contrib/org-protocol.html
+
 

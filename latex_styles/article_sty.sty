@@ -19,8 +19,8 @@ related=false]{biblatex}
 \newtcolorbox{nbox}{colback=green!0.5!white, colframe=green!960!black, coltitle=black,
   fonttitle=\bfseries, title=Note, attach title to upper={\ --\ }}
 
-\RequirePackage[T1]{fontenc}
-\RequirePackage[utf8]{inputenc}
+%\RequirePackage[T1]{fontenc}
+%\RequirePackage[utf8]{inputenc}
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
 \RequirePackage{amsfonts}
@@ -35,6 +35,8 @@ indention=18pt]{caption}
 \RequirePackage{supertabular}
 \RequirePackage{booktabs}
 \RequirePackage{longtable}
+\renewcommand{\arraystretch}{1.25} % space between rows in the tables
+\usepackage[figuresleft]{rotating} % to use \begin{sidewaysfigure} ... \end{sidewaysfigure} and rotate figs
 \RequirePackage{multirow}
 \RequirePackage[section]{placeins}
 \RequirePackage{xcolor}
@@ -46,7 +48,6 @@ indention=18pt]{caption}
 %\labelformat{figure}{f\/igura~#1}
 %\labelformat{table}{tabla~#1}
 % Para modificar el separador de caption, ie. Figura 1. en lugar de Figura 1:
-
 
 \RequirePackage{kantlipsum}
 
