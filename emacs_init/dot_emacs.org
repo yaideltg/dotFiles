@@ -28,6 +28,9 @@ Disable menubar, scrollbar, toolbar and fringe:
   (tool-bar-mode -1)
   ;; (fringe-mode -1)
   (scroll-bar-mode -1)
+  ;; disable scrollbars
+  (customize-set-variable 'scroll-bar-mode nil)
+  (customize-set-variable 'horizontal-scroll-bar-mode nil)
 #+end_src
 
 Some key-bindings (see [[https://www.emacswiki.org/emacs/LineNumbers][this page]] for line-numbers configuration)
@@ -97,7 +100,6 @@ my case I am using the =ef-themes= because they are really colorful (in a balanc
   (use-package fontaine
     :ensure t
     :config
-
     (setq fontaine-latest-state-file
           (locate-user-emacs-file "fontaine-latest-state.eld"))
   
@@ -787,8 +789,8 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     ;;
     ;; Tasks and Todos
     (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "WORKING(w)" "DELEGATED(g)" "|" "DONE(d)" "CANCELLED(c)")
-            (sequence "COMPUTING(p)" "|" "FINISHED(f)" "UNFINISHED(u)")))
+          '((sequence "TODO(t)" "NEXT(n)" "WORKING(w)" "DELEGATED(g)" "|" "DONE(d)" "CANCELLED(x)")
+            (sequence "COMPUTE(c)" "COMPUTING(p)" "|" "FINISHED(f)" "UNFINISHED(u)")))
     (setq org-todo-keyword-faces
           (quote (("TODO"      :background "IndianRed1"      :foreground "black" :weight bold)
                   ("NEXT"      :background "sky blue"        :foreground "black" :weight bold)
@@ -1437,7 +1439,7 @@ Heading for Markdown Hugo post using the Yugo theme
     "tags: [\"tag1\"]\n"
     "categories: [\"cat1\"]\n"
     "author: [\"yaidel\"]\n"
-    "showToc: true\n"
+    "showToc: false\n"
     "TocOpen: false\n"
     "draft: true\n"
     "hidemeta: false\n"

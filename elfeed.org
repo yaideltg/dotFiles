@@ -68,6 +68,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://tomcritchlow.com/feed][Tom Critchlow]]
 *** [[https://swtlo.com/feed/][Swimming With the Light On]]
 *** [[https://mattgemmell.scot/atom.xml][Matt Gemmell]]                                                 :favorito:
+*** [[https://arunmani.in/index.xml][Arun Mani J]]
 ** Blogs en Español
 *** [[https://antoniosimon.site/feed/][Antonio Simon]]
 ** Tech blogs
