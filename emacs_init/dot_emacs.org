@@ -6,19 +6,16 @@
 
 * Interface tweaks
 
-First of all, avoid the output of =custom-set-variables= to the =~/.emacs.d/init.el= file. This some times
-writes there some customization which interferes with the settings appearing in this file, making them
-useless. I have had some rough times debugging stuffs because they were defined automatically by Emacs in the
-=custom-set-variables= section of the =init= file.
+First of all, avoid the output of =custom-set-variables= to the =~/.emacs.d/init.el= file. This some times writes there some customization which interferes with those made in this file. I have had some rough times debugging stuffs because they were defined automatically by Emacs in the =custom-set-variables= section of the =init= file.
 
 #+begin_src emacs-lisp
 (setq-default custom-file null-device)
 #+end_src
 
-Then some other tweaks of the interface.
+Then, inhibit the startup bottom buffer. If someone like it just comment the following block.
 
 #+begin_src emacs-lisp
-  (setq inhibit-startup-message t)   ;; Inhibits the startup bottom screen
+  (setq inhibit-startup-message t) 
 #+end_src
 
 Disable menubar, scrollbar, toolbar and fringe:
@@ -28,12 +25,11 @@ Disable menubar, scrollbar, toolbar and fringe:
   (tool-bar-mode -1)
   ;; (fringe-mode -1)
   (scroll-bar-mode -1)
-  ;; disable scrollbars
   (customize-set-variable 'scroll-bar-mode nil)
   (customize-set-variable 'horizontal-scroll-bar-mode nil)
 #+end_src
 
-Some key-bindings (see [[https://www.emacswiki.org/emacs/LineNumbers][this page]] for line-numbers configuration)
+Some key-bindings I use (see [[https://www.emacswiki.org/emacs/LineNumbers][this page]] for line-numbers configuration)
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -71,9 +67,7 @@ Or it can be set to a certain geometry with the following options
 
 ** Theme
 
-One theme I used for a long time was Leuven which can be loaded with ~(load-theme 'leuven t)~, however
-[[https://protesilaos.com/][Protesilaos]]' themes are really nice alternatives which have been gratefully welcomed in the Emacs comunity. In
-my case I am using the =ef-themes= because they are really colorful (in a balanced maner). 
+One theme I used for a long time was Leuven which can be loaded with ~(load-theme 'leuven t)~, however [[https://protesilaos.com/][Protesilaos]]' themes are really nice alternatives which have been gratefully welcomed in the Emacs comunity. In my case I am using the =ef-themes= because they are really colorful (in a balanced maner). Other Prot's packages complement the theme:
 
 #+begin_src emacs-lisp
   (use-package ef-themes
@@ -171,6 +165,16 @@ my case I am using the =ef-themes= because they are really colorful (in a balanc
     )
 #+end_src
 
+#+BEGIN_SRC emacs-lisp
+  (use-package lin
+    :ensure t
+    :config
+    (setq lin-face 'lin-mac-override-fg)
+    (setq lin-mode-hooks (append lin-mode-hooks '(prog-mode-hook org-mode-hook)))
+    (lin-global-mode 1)
+    )
+#+END_SRC
+
 ** UTF-8 encoding:
 
 #+BEGIN_SRC emacs-lisp
@@ -181,27 +185,15 @@ my case I am using the =ef-themes= because they are really colorful (in a balanc
   (prefer-coding-system 'utf-8)
 #+END_SRC
 
-** Line indicator
-
-Line indicator options, also employing a package maintained by [[https://protesilaos.com/][Protesilaos]], =lin=:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package lin
-    :ensure t
-    :config
-    (setq lin-face 'lin-mac-override-fg)
-    (setq lin-mode-hooks (append lin-mode-hooks '(prog-mode-hook org-mode-hook)))
-    ;; (lin-global-mode 1)
-    )
-#+END_SRC
-
-** Change and 'yes or no' prompts to 'y or n':
+** Change 'yes or no' prompts to 'y or n':
 
 #+BEGIN_SRC emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 ** Auto-fill-mode for text based buffers
+
+We could use only the following block to achieve auto fill. This would, however, automatically break the line and start a new one when column =fill-column= is reached. I used to use this for some time, but afterwards I needed to move the text to another application, and it was all filled with line breaks.
 
 #+begin_src emacs-lisp
   ;; (add-hook 'text-mode-hook 'auto-fill-mode)

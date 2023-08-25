@@ -9,6 +9,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 
 * Blogs                                                         :elfeed:blog:
 ** Emacs                                                              :emacs:
+*** [[https://poview.org/index.xml][Poview]]
 *** [[https://nullprogram.com/feed/][NullProgram]]
 *** [[https://sachachua.com/blog/feed/][Sacha Chua]]
 *** [[http://pragmaticemacs.com/feed/][Pragmatic Emacs]]
@@ -74,6 +75,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://silviamaggidesign.com/feed.xml][Silvia Maggi]]
 *** [[https://blog.jim-nielsen.com/feed.xml][Jim Nielsen]]
 *** [[https://jeffreyflorek.com/feed.xml][Jeffrey Florek]]
+*** [[https://kieranhealy.org/index.xml][Kieran Healy]]
 ** Blogs en Español
 *** [[https://antoniosimon.site/feed/][Antonio Simon]]
 ** Tech blogs
