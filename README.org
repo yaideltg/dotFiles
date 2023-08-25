@@ -1,0 +1,24 @@
+#+title: My configuration files
+#+author: yaidel
+#+date: 25-08-2023
+
+This is the repository for my configuration files. For the moment I am recording Emacs, LaTeX, and the subscription list for Elfeed (in Org Mode).
+
+* Emacs configuration
+
+In my =~/.emacs.d/init.el= file I have the following line
+
+#+begin_src emacs-lisp
+(load "~/config/dotFiles/emacs_init/init.el")
+#+end_src
+
+This loads the named file, which states the initial configuration ~org-babel-load-file~ needs to load the =dot_emacs.org=, which contains the configuration by itself.
+
+* List of blogs
+
+I always find interesting to discover new blogs in other Blogrolls. This is not a Blogroll by itself, but the complete list, in case you want to dig deeper.
+
+* LaTeX Styles
+
+These are the established styles I use for my documents in LaTeX. Some other modifications are made in a per-document base, but these are the skeletons.
+
