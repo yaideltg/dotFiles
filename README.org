@@ -2,7 +2,7 @@
 #+author: yaidel
 #+date: 25-08-2023
 
-This is the repository for my configuration files. For the moment I am recording Emacs, LaTeX, and the subscription list for Elfeed (in Org Mode).
+This is the repository for my configuration files. For the moment I am recording: Emacs, LaTeX, and the subscription list for Elfeed (in Org Mode).
 
 * Emacs configuration
 
