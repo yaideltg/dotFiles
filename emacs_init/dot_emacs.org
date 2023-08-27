@@ -193,13 +193,19 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
 
 ** Auto-fill-mode for text based buffers
 
-We could use only the following block to achieve auto fill. This would, however, automatically break the line and start a new one when column =fill-column= is reached. I used to use this for some time, but afterwards I needed to move the text to another application, and it was all filled with line breaks.
+We could use only the following block to achieve auto fill. This would, however, automatically break the line and start a new one when column =fill-column= is reached. I used to use this for some time, but afterwards I needed to move the text to another application, and it was all filled with line breaks which I had to remove by hand. There is probably a smart and convenient way to remove those end-of-line, but I am not aware of it.
 
 #+begin_src emacs-lisp
   ;; (add-hook 'text-mode-hook 'auto-fill-mode)
 #+end_src
 
-Instead of actually changing the text of the buffer by introducing end of lines when using =auto-fill-mode=, it is possible to use the option =visual-line-mode=, which can be further extended with the package =visual-fill-column=. [[https://github.com/joostkremers/visual-fill-column][This last package]] makes possible that instead of wrapping lines at the window edge, which is the standard behavior of =visual-line-mode=, it wraps lines at =fill-column=.
+Instead of actually changing the text of the buffer by introducing end-of-lines when using =auto-fill-mode=, it is possible to use the option =visual-line-mode=. This mode will take the text in the edge and simulate as if there were a end-of-line, i.e. the line will be broken, but in reality it is just a visual effect, the line in the underlying file has not end-of-line. =visual-line-mode= comes built in Emacs, and I call it when loading the packages where I want it to be present, like org-mode, for example. Next code line activates =visual-line-mode= globally in case you find it fancy:
+
+#+begin_src emacs-lisp
+  ;; (global-visual-line-mode 1)
+#+end_src
+
+The behavior achieved by =visual-line-mode= can be extended to be more like =auto-fill-mode=, i.e. to restrict the column to which the text is displayed as maximum. That can be achieved with the package =visual-fill-column=. [[https://github.com/joostkremers/visual-fill-column][This package]] makes possible that instead of wrapping lines at the window edge, which is the standard behavior of =visual-line-mode=, it wraps lines at =fill-column=. Just what one may want:
 
 #+begin_src emacs-lisp
   (use-package visual-fill-column
@@ -211,12 +217,6 @@ Instead of actually changing the text of the buffer by introducing end of lines 
   (global-set-key (kbd "<f6>") 'visual-fill-column-mode)
 #+end_src
 
-Next line activates =visual-line-mode= globally, but this will affect all buffers and that's is most of the time unnecessary. One can always activate it manually.
-
-#+begin_src emacs-lisp
-  ;; (global-visual-line-mode 1)
-#+end_src
-
 Next we set the columns number where to cut
 
 #+begin_src emacs-lisp
@@ -224,8 +224,9 @@ Next we set the columns number where to cut
   (setq column-number-mode t)
 #+end_src
 
-And finally use the =adaptive-wrap= package to avoid that the next line, when artificially broken by
-=visual-fill-column=, be more on the left than its parent, in case the parent was indented.
+However, I have noticed that =visual-fill-column= *has some conflicts with org-mode* documents using =org-indent-mode=. The indentation just doesn't work as expected. For that reason I prefer to just assign it a keybinding and call it when need it. So far I have not called it even once.
+
+And finally, we could use the =adaptive-wrap= package to avoid that the next line, when artificially broken by =visual-fill-column=, be more on the left than its parent, in case the parent was indented.
 
 #+begin_src emacs-lisp
   ;; (use-package adaptive-wrap
@@ -238,11 +239,9 @@ And finally use the =adaptive-wrap= package to avoid that the next line, when ar
   ;;   )
 #+end_src
 
-Sin embargo, este paquete parece no combinar muy bien con =org-indent=, y cuando =org-indent= mueve un párrafo hacia la derecha para identarlo, pues sólo lo hace en la primera línea, quedando el resto pegadas al margen.
-
 ** Edit the configuration file
 
-Set =C-c e= to edit init file:
+Set =C-c e= to edit this file:
 
 #+BEGIN_SRC emacs-lisp
   (defun config-visit ()
@@ -251,7 +250,7 @@ Set =C-c e= to edit init file:
   (global-set-key (kbd "C-c e") 'config-visit)
 #+END_SRC
 
-Reload init file when =C-c r= is pressed:
+Reload the configuration from this file when =C-c r= is pressed:
 
 #+BEGIN_SRC emacs-lisp
   (defun config-reload ()
@@ -262,6 +261,9 @@ Reload init file when =C-c r= is pressed:
 #+END_SRC
 
 * Windows management
+
+
+
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :ensure t
@@ -270,8 +272,10 @@ Reload init file when =C-c r= is pressed:
       (global-set-key [remap other-window] 'ace-window)
       (custom-set-faces
        '(aw-leading-char-face
-	 ((t (:inherit ace-jump-face-foreground :height 2.0)))))
+         ((t (:inherit ace-jump-face-foreground :height 2.0)))))
       ))
+
+  ;; (global-set-key (kbd "M-o") 'ace-window)
 #+END_SRC
 
 Winner is a global minor mode built into Emacs that records the changes in the window configuration. It basically provides two functions:
@@ -587,6 +591,55 @@ When typing in the M-x, it shows a list of possibilities
     :ensure t
     )
 #+end_src
+* Org-mode links integration with Thunderbird
+
+Some years ago it was possible to use the [[https://github.com/mikehardy/thunderlink][Thunderlink]] plugin to obtain a "link" to a specific email, and when you clicked that link it would open Thunderbird with a focus on the required email. However, that project died. Fortunately, [[https://camiel.bouchier.be/en/about-me][Camiel Bouchier]] made the necessary re-writing of the code need to make it work with newer versions of Thunderbird's API, in what it's called [[https://github.com/CamielBouchier/cb_thunderlink][cb_thunderlink]]. For the time of writing ([2023-08-26 Sat]) it is still maintained, let's hope it keeps that way.
+
+The (sort of) documentation for the plugin is on [[https://camiel.bouchier.be/en/cb_thunderlink][this post]] of Camiel's website. And to use it in conjunction with Emacs it is also needed an Elisp workaround to tell emacs how to respond when =org-open-at-point= is executed on one of =cb_thunderlink='s link.
+1) The installation of the =cb_thunderlink= plugin is straightforward in the Thunderbird Plugin Store.
+2) The workaround, on the other hand, I got from [[https://vxlabs.com/][vxlabs]]' website, where he explains how to [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]]. As you may have noticed, the workaround was written for =thunderlink=, not for =cb_thunderlink=, so I have made some modifications to it. Also, there was a conditional to check if the system was Mac or not, I removed that part too as I do not need it. See the code below:
+
+#+begin_src emacs-lisp
+  (setq thunderbird-program "thunderbird")
+
+  (defun org-message-thunderlink-open (slash-message-id)
+    "Handler for org-link-set-parameters that converts a standard message:// link into
+   a thunderlink and then invokes thunderbird."
+    ;; remove any / at the start of slash-message-id to create real message-id
+    (let ((message-id
+           (replace-regexp-in-string (rx bos (* "/"))
+                                     ""
+                                     slash-message-id)))
+      (kill-new (concat "cbthunderlink://" message-id))
+      (start-process
+       (concat "cbthunderlink: " message-id)
+       nil
+       thunderbird-program
+       "-cbthunderlink"
+       (concat "cbthunderlink://" message-id)
+       )))
+  ;; on message://aoeu link, this will call handler with //aoeu
+  (org-link-set-parameters "message" :follow #'org-message-thunderlink-open)
+#+end_src
+
+A link generated with =cb_thunderlink= looks something like this:
+
+#+begin_example
+cbthunderlink://MjAyMy0wOC0yNVQxNToyOTowMC4wMDBaO05h
+#+end_example
+
+In the article [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]] they suggest to write in your notes =message= instead of =cbthunderlink=, this way you can use something else in the future in case =cb_thunderlink= also dies as the linking system in your notes will not depend on it (at least completely).
+
+In the configuration of the =cb_thunderlink= plugin you can manage the format to copy the email link. In my case I have made one called =emacsOrgLink=, which is set to ~[[message://$cblink$][$subject$]]~ to comply with Org-mode link format. Note that the name of the link will be the subject of the email.
+
+The code above will associate the function ~org-message-thunderlink-open~ to the =message= key when =org-open-at-point= is executed on these links, and then it will replace =message= with =cbthunderlink= to pass the link to Thunderbird. Of course this part can be avoided by just letting the links in their original format (starting with =cbthunderlink=), and the function would be really simple. Once more, I chose =message= over =cbthunderlink= because =message= is built in Emacs. Nevertheless, I do not think if I stop using Thunderbird and go to Mu4e or Gnus the links would work (because of their =messageid= being different in Mu4e-Gnus VS =cb_thunderlink=). Anyway see [[https://vxlabs.com/2023/08/08/open-message/-links-with-mu4e-or-fastmail/][this recent post]] of vxlab which is similar to the one discussed above, but for Mu4e and fastmail. You can decide which format to use.
+
+The last point to highlight is the use of ~(kill-new (concat "cbthunderlink://" message-id))~. Because of limitations of the Thunderbird API, which dropped support for the =thunderbird -thunderlink <email-link>= clickable feature, =cb_thunderlink= cannot directly open the emial is some systems (see documentation). In those systems where it cannot simulate the needed behavior and open the specific email directly, instead, it creates a button on the top-right corner (close to the "Display Thunderbird menu"), which once clicked will use the content of the clipboard to open the corresponding email, in case the content of the clipboard is a =cb_thunderlink= email link. This line of code copy the email link to the clipboard so we can access the desired email.
+
+Summarizing, once everything is set up. You right-click on the body of the email in Thunderbird, go to the =cb_thunderlink= menu entry (usually on the bottom), and copy the formatted link you established (=emacsOrgLink= in my case). Next, past it in Emacs. Once you need to use it, just execute =org-open-at-point= (C-c C-o), and it will open Thunderbird, but in some cases not yet the specific email. If this functionality is missing, to open the specific email just click on the =cb_thunderlink= button on the top-right region. You should see now the email.
+
+This solution is not es elegant as the use of Gnus and Notmuch, but certainly will require much less setup than those two, and time, which I don't have right now for that. If you have not the time, or would like to continue with the visual interface oriented approach that is Thunderbird in face to Gnus and Notmuch, this is the solution to have links in your notes redirecting to the related  email.
+
 * Autocomplete
 #+BEGIN_SRC emacs-lisp
   ;; (use-package auto-complete

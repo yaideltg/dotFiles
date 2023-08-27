@@ -76,6 +76,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://blog.jim-nielsen.com/feed.xml][Jim Nielsen]]
 *** [[https://jeffreyflorek.com/feed.xml][Jeffrey Florek]]
 *** [[https://kieranhealy.org/index.xml][Kieran Healy]]
+*** [[https://cpbotha.net/posts/index.xml][Charl Botha]]
 ** Blogs en Español
 *** [[https://antoniosimon.site/feed/][Antonio Simon]]
 ** Tech blogs
