@@ -90,6 +90,16 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     )
 #+end_src
 
+The following code was provided by Prot, and it is needed to make =spacious-padding= remove the black borders it creates when Emacs is run with the daemon.
+
+#+begin_src emacs-lisp
+  (defun my-spacious-padding-remove-borders (_)
+    (spacious-padding-modify-frame-parameters nil)
+    (spacious-padding-set-invisible-dividers nil))
+
+  (add-hook 'after-make-frame-functions #'my-spacious-padding-remove-borders)
+#+end_src
+
 #+begin_src emacs-lisp
   (use-package fontaine
     :ensure t
@@ -506,7 +516,7 @@ Download video of the feed in the folder ~/Videos directly with the key binding 
   (defun ytg/yt-dl-it (url)
     "Downloads the URL in an async shell"
     (let ((default-directory "~/Videos"))
-      (async-shell-command (format "youtube-dl %s" url))))
+      (async-shell-command (format "yt-dlp %s" url))))
 
   (defun ytg/elfeed-youtube-dl (&optional use-generic-p)
     "Youtube-DL link"
@@ -898,7 +908,7 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
       (setq org-templates-location-var (concat org-directory organizer-file))
       (setq org-capture-templates
             '(("t" "Todo" entry (file+headline org-templates-location-var "Inbox")
-               "* TODO [#C] %? \nCaptured on %U")
+               "* TODO %? \nCaptured on %U")
               ("h" "Health Tracking" entry (file+headline org-health-tracking-file "Daily data")
                "* %t \n:PROPERTIES:\n:barras: %?\n:pararelas: \n:planchas: \n:abdominales: \n:dificultad: \n:ánimo: \n:tiempo: \n:sueño: \n:ayuno: \n:caminar: \n:END:")
               ("n" "Read later / take a note" entry (file+headline org-templates-location-var "Inbox")
@@ -1113,13 +1123,38 @@ For Structure Templates [[https://orgmode.org/manual/Structure-Templates.html][(
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
 #+end_src
 
-** Org Export
+** Org Export Markdown
 
 Enable Markdown export back-end (see [[https://orgmode.org/manual/Exporting.html][Org-export manual]])
 
 #+begin_src emacs-lisp
 (require 'ox-md)
 #+end_src
+
+** Org Export Latex
+
+#+begin_src emacs-lisp
+  (require 'ox-latex)
+
+  ;; set the sequence for the compilation
+  (setq org-latex-pdf-process
+        '("pdflatex -interaction nonstopmode -output-directory %o %f"
+          "bibtex %b"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"))
+
+  ;; stop org adding hypersetup{author..} to latex export
+  (setq org-latex-with-hyperref nil)
+  ;; (setq org-latex-prefer-user-labels t)
+
+  ;; deleted unwanted file extensions after latexMK
+  (setq org-latex-logfiles-extensions
+        (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf" "acn" "acr" "alg" "glg" "gls" "ist")))
+
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+#+end_src
+
 * Org-cite and citations handling
 To configure the citations within Org, we have its Org-cite functionality. More information about this
 functionality can be found in the follwoing sources:
@@ -1173,46 +1208,6 @@ The following option displays by default the dates which are holidays in a diffe
 
 #+begin_src emacs-lisp
 (setq calendar-mark-holidays-flag t)
-#+end_src
-
-* ERC
-
-Initial configuration of the user and chats to connect to.
-
-#+begin_src emacs-lisp
-  (setq erc-server "irc.libera.chat"
-	erc-port "6697"
-	erc-nick "yaidel"
-	erc-user-full-name "yaidel"
-	erc-track-shorten-start 8
-	erc-autojoin-channels-alist '(("irc.libera.chat" . "#emacs"))
-	erc-kill-buffer-on-part t
-	erc-auto-query 'bury)
-#+end_src
-
-Configuration of what to show or not on the cannels and the changes in status of them and thir participants
-
-#+begin_src emacs-lisp
-  (setq ;;erc-track-exclude '("#emacs")
-   erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
-   erc-hide-list '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
-   erc-track-exclude-server-buffer t
-   erc-interpret-mirc-color t)
-#+end_src
-
-This causes ERC to connect to the Libera.Chat network upon hitting C-c f
-#+begin_src emacs-lisp
-  (global-set-key "\C-cf" (lambda () (interactive)
-			    (erc-tls :server "irc.libera.chat" :port "6697"
-				     :nick "yaidel")))
-#+end_src
-
-Facilitating the automatic loggin to the IRC server by using auth-source library.
-
-#+begin_src emacs-lisp
-  (setq erc-prompt-for-password nil)
-  (setq erc-prompt-for-nickserv-password nil)
-  (setq auth-sources '(password-store))
 #+end_src
 
 * Denote
@@ -1350,13 +1345,82 @@ Define a function to handle the creation of the journal entry:
          '("journal"))))))
 #+end_src
 
-Bind it to a keybinding. However, every time you hit this keybinding a new note is going to be created. Have
-in mind that the identifier section of the notes will differ as they are based in the creation time up to a
-second. I prefer to create them 
+And add a key binding for it
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c n j") 'my-denote-journal)
 #+end_src
+
+Finally, define a function and a keybinding to handle the creation of weekly review journal entries:
+
+#+begin_src emacs-lisp
+  (defun my-denote-weekly-review ()
+    "Create an entry tagged 'week' with the date as its title.
+  If a week-note for the current week exists, visit it.  If multiple
+  entries exist, prompt with completion for a choice between them.
+  Else create a new file."
+    (interactive)
+    (let* ((today (format-time-string "Weekly review for week number %W of %Y"))
+           (string (denote-sluggify today))
+           (files (denote-directory-files-matching-regexp string)))
+      (cond
+       ((> (length files) 1)
+        (find-file (completing-read "Select file: " files nil :require-match)))
+       (files
+        (find-file (car files)))
+       (t
+        (denote
+         today
+         '("journal"))))))
+#+end_src
+
+And add a key binding for it
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n w") 'my-denote-weekly-review)
+#+end_src
+
+
+* ERC
+
+Initial configuration of the user and chats to connect to.
+
+#+begin_src emacs-lisp
+  (setq erc-server "irc.libera.chat"
+	erc-port "6697"
+	erc-nick "yaidel"
+	erc-user-full-name "yaidel"
+	erc-track-shorten-start 8
+	erc-autojoin-channels-alist '(("irc.libera.chat" . "#emacs"))
+	erc-kill-buffer-on-part t
+	erc-auto-query 'bury)
+#+end_src
+
+Configuration of what to show or not on the cannels and the changes in status of them and thir participants
+
+#+begin_src emacs-lisp
+  (setq ;;erc-track-exclude '("#emacs")
+   erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
+   erc-hide-list '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
+   erc-track-exclude-server-buffer t
+   erc-interpret-mirc-color t)
+#+end_src
+
+This causes ERC to connect to the Libera.Chat network upon hitting C-c f
+#+begin_src emacs-lisp
+  (global-set-key "\C-cf" (lambda () (interactive)
+			    (erc-tls :server "irc.libera.chat" :port "6697"
+				     :nick "yaidel")))
+#+end_src
+
+Facilitating the automatic loggin to the IRC server by using auth-source library.
+
+#+begin_src emacs-lisp
+  (setq erc-prompt-for-password nil)
+  (setq erc-prompt-for-nickserv-password nil)
+  (setq auth-sources '(password-store))
+#+end_src
+
 * Markdown mode
 
 #+begin_src emacs-lisp

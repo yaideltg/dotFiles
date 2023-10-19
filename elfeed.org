@@ -9,7 +9,6 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 
 * Blogs                                                         :elfeed:blog:
 ** Emacs                                                              :emacs:
-*** [[https://poview.org/index.xml][Poview]]
 *** [[https://nullprogram.com/feed/][NullProgram]]
 *** [[https://sachachua.com/blog/feed/][Sacha Chua]]
 *** [[http://pragmaticemacs.com/feed/][Pragmatic Emacs]]
@@ -21,6 +20,16 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://protesilaos.com/master.xml][Protesilaos]]
 *** [[https://howardism.org/index.xml][Howard Abrams]]
 ** People's Blogs
+*** [[https://poview.org/index.xml][Poview]]
+*** [[https://taylor.town/feed.xml][Taylor.town]]
+*** [[https://unmonoqueteclea.github.io/feed.xml][unmonoqueteclea]]
+*** [[https://randomgeekery.org/index.xml][Random Geekery]]
+*** [[https://noisydeadlines.net/feed/][Noisy Deadlines]]
+*** [[https://vovalog.info/feed/][Vova]]
+*** [[https://so1o.xyz/feed.xml][so1o]]
+*** [[https://garrit.xyz/rss.xml][Garrit]]
+*** [[file:PaulGrahamRSS.rss][Paul Graham]]
+*** [[https://www.baldurbjarnason.com/index.xml][Baldur Bjarnason]]
 *** [[https://drewdevault.com/blog/index.xml][Drew DeVault]]
 *** [[https://lukesmith.xyz/rss.xml][Luke Smith]]
 *** [[https://notrelated.xyz/rss][NotRelated]]
@@ -59,7 +68,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://jacobwsmith.xyz/rss.xml][Jacob Smith]]
 *** [[https://kimberlyhirsh.com/feed.xml][Kimberly Hirsh]]                                                 :ignore:
 *** [[https://flower.codes/feed.xml][Flower.Codes]]
-*** [[https://tilde.town/~dustin/index.xml][Dustin]]
+*** [[https://0xdstn.site/index.xml][Dustin]]
 *** [[https://anhvn.com/feed.xml][anhvn]]
 *** [[https://josem.co/articles/index.xml][Jose M. Gilgado]]
 *** [[https://mnmlist.me/feed/][Mnmlist]]
@@ -95,7 +104,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 ** Revistas
 *** [[https://hypermediamagazine.com/feed/][Hyper Media Magazine]]                                           :ignore:
 * Services                                                  :elfeed:services:
-*** [[https://proton.me/blog/feed][Proton.me]]
+*** [[https://proton.me/blog/feed][Proton.me]]                                                      :ignore:
 *** [[https://simplelogin.io/blog/index.xml][Simplelogin]]
 *** [[https://tutanota.com/blog/feed.xml][Tutanota]]
 *** [[https://www.getmonero.org/feed.xml][Monero]]
