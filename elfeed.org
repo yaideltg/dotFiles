@@ -21,7 +21,26 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://howardism.org/index.xml][Howard Abrams]]
 ** People's Blogs
 *** [[https://poview.org/index.xml][Poview]]
-*** [[https://taylor.town/feed.xml][Taylor.town]]
+*** [[https://gluecko.se/index.xml][Soeren (gluecko)]]
+*** [[https://css-irl.info/rss.xml][CSS In Real Life]]
+*** [[https://blog.isak.me/rss.xml][Isak Solheim]]
+*** [[https://foreverliketh.is/blog/index.xml][Foreverliketh]]
+*** [[https://82mhz.net/index.xml][Andreas]]
+*** [[https://darekkay.com/atom.xml][Derek Kay]]
+*** [[https://piperhaywood.com/feed][Piper Haywood]]               :ignore:
+*** [[https://kevquirk.com/feed][Kev]]                                                            :ignore:
+*** [[https://www.ftwynn.com/index.xml][David Wynn]]
+*** [[https://maggieappleton.com/rss.xml][Maggie Appleton]]  
+*** [[https://arjenwiersma.nl/index.xml][Arjen Wiersma]]
+*** [[https://amitten.bearblog.dev/feed][a Mitten]]
+*** [[https://ilyess.cc/posts/index.xml][ilyess]]
+*** [[https://aboutgrau.com/atom.xml][aboutgrau]]
+*** [[https://www.thingelstad.com/feed.xml][Jamie Thingelstad]]                                              :ignore:
+*** [[https://daverupert.com/atom.xml][Dave Rupert]]
+*** [[https://feeds.feedburner.com/JamieToddRubin][Jamie Todd Rubin]]
+*** [[https://www.ufried.com/blog/index.xml][Uwe Friedrichsen]]
+*** [[https://www.kryogenix.org/days/feed][Stuart Langridge]]
+*** [[https://taylor.town/feed.xml][Taylor.town]]                                                    :ignore:
 *** [[https://unmonoqueteclea.github.io/feed.xml][unmonoqueteclea]]
 *** [[https://randomgeekery.org/index.xml][Random Geekery]]
 *** [[https://noisydeadlines.net/feed/][Noisy Deadlines]]
@@ -36,7 +55,7 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://m-chrzan.xyz/rss.xml][Martin Chrzanowski]]
 *** [[https://mark.mcnally.je/blog/rss][Mark McNally]]
 *** [[https://jao.io/blog/rss.xml][Jao]]
-*** [[https://andreyorst.gitlab.io/feed.xml][Andrey Listopadov]]
+*** [[https://andreyorst.gitlab.io/feed.xml][Andrey Listopadov]]                                              :ignore:
 *** [[https://cestlaz.github.io/rss.xml][C'est la Z]]                                                     :ignore:
 *** [[https://batsov.com/atom.xml][Bozhidar Batsov]]
 *** [[https://lucidmanager.org/index.xml][Lucid Manager]]
@@ -82,12 +101,26 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://minutestomidnight.co.uk/feed.xml][MINUTES TO MIDNIGHT]]
 *** [[https://starbreaker.org/feed.xml][Star Breaker]]
 *** [[https://silviamaggidesign.com/feed.xml][Silvia Maggi]]
-*** [[https://blog.jim-nielsen.com/feed.xml][Jim Nielsen]]
-*** [[https://jeffreyflorek.com/feed.xml][Jeffrey Florek]]
-*** [[https://kieranhealy.org/index.xml][Kieran Healy]]
-*** [[https://cpbotha.net/posts/index.xml][Charl Botha]]
+*** [[https://blog.jim-nielsen.com/feed.xml][Jim Nielsen]]         :ignore:
+*** [[https://jeffreyflorek.com/feed.xml][Jeffrey Florek]]         :ignore:
+*** [[https://kieranhealy.org/index.xml][Kieran Healy]]                                                   :ignore:
+*** [[https://cpbotha.net/posts/index.xml][Charl Botha]]           :ignore:
+*** [[https://www.schneier.com/feed/atom][Schneier on security]]
+*** [[https://flamedfury.com/feed.xml/][Flamed Fury]]
 ** Blogs en Español
 *** [[https://antoniosimon.site/feed/][Antonio Simon]]
+*** [[https://elblogdelazaro.org/index.xml][El Blog de Lazaro]]
+*** [[https://thecheis.com/feed/][The_Chei$]]
+*** [[https://adrianperales.com/feed][Adrián Perales]]
+*** [[https://www.versvs.net/feed/][José Alcántara (versvs)]]
+*** [[https://c3po.website/rss/][C3PO]]
+*** [[https://jdrm.info/feeds/all.atom.xml][Jacobo Da Riva Muñoz]]
+*** [[https://empiezaen2023.wordpress.com/feed][Desde un balcón en Madrid]]
+*** [[https://alexisalzate.com/blog/index.xml][Alexis Alzate]]
+*** [[https://pabs.xyz/feed.xml][Blog en Pausa]]
+*** [[https://sinhojas.net/entradas.xml][Cuaderno sin hojas]]
+*** [[https://guillermolatorre.com/rss.xml][Guillermo Latorre]]
+*** [[https://www.brycewray.com/index.xml][Bryce Wray]]
 ** Tech blogs
 *** [[https://pakstech.com/blog/index.xml][PaksTech]]
 *** [[https://www.regisphilibert.com/index.xml][Règis Philibert]]
@@ -97,18 +130,20 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 *** [[https://mertbakir.gitlab.io/index.xml][Mert Bakir]]
 * Free Software                                                   :fs:elfeed:
 *** [[https://stallman.org/rss/rss.xml][Richard Stallman]]                                               :ignore:
-*** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]
-*** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]
-*** [[https://blog.torproject.org/feed.xml][Tor]]
+*** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]                                                      :ignore:
+*** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]                                                       :ignore:
+*** [[https://blog.torproject.org/feed.xml][Tor]]                                                            :ignore:
 * Cuba                                                          :cuba:elfeed:
 ** Revistas
 *** [[https://hypermediamagazine.com/feed/][Hyper Media Magazine]]                                           :ignore:
 * Services                                                  :elfeed:services:
 *** [[https://proton.me/blog/feed][Proton.me]]                                                      :ignore:
-*** [[https://simplelogin.io/blog/index.xml][Simplelogin]]
-*** [[https://tutanota.com/blog/feed.xml][Tutanota]]
-*** [[https://www.getmonero.org/feed.xml][Monero]]
-*** [[https://mullvad.net/en/blog/feed/atom/][Mullvad]]
+*** [[https://simplelogin.io/blog/index.xml][Simplelogin]]                                                    :ignore:
+*** [[https://tutanota.com/blog/feed.xml][Tutanota]]                                                       :ignore:
+*** [[https://www.getmonero.org/feed.xml][Monero]]                                                         :ignore:
+*** [[https://mullvad.net/en/blog/feed/atom/][Mullvad]]                                                        :ignore:
+*** [[https://grocy.info/changelog/feed][Grocy Changelog]]
+*** [[https://fedoramagazine.org/feed/][Fedora Magazine]]
 * Science                                                    :science:elfeed:
 ** [[https://joaquinbarroso.com/feed/][Joaquin Barroso]]
 * Videos                                                      :videos:elfeed:
@@ -120,5 +155,5 @@ If you want to ignore one of the feeds, you do not have to delete it, just tagg 
 ** Informative
 *** [[https://odysee.com/$/rss/@AfterSkool:7][After Skool]]
 *** [[https://odysee.com/$/rss/@thetwelfthmonkey:0][TheTwelftMonkey]]
-*** [[https://odysee.com/$/rss/@AlphaNerd:8][Mental Outlaw]]
-*** [[https://videos.lukesmith.xyz/feeds/videos.xml?sort=-publishedAt&isLocal=true][Luke Smith]]
+*** [[https://odysee.com/$/rss/@AlphaNerd:8][Mental Outlaw]]                                                  :ignore:
+*** [[https://videos.lukesmith.xyz/feeds/videos.xml?sort=-publishedAt&isLocal=true][Luke Smith]]                                                     :ignore:
