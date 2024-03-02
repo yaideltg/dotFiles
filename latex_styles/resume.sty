@@ -13,25 +13,26 @@
 \RequirePackage{geometry}
 \geometry{
   a4paper,
-  left=20mm,
-  %right=
-  %bottom=
+  left=10mm,
+  right=15mm,
+  bottom=10mm,
   top=15mm}
 
 % to write a short phrase on the document
 \usepackage{verse}
+% to attribute that phrase to the author, and print it on the right
 \newcommand{\attrib}[1]{%
 \nopagebreak{\raggedleft\footnotesize #1\par}}
 \renewcommand{\poemtitlefont}{\normalfont\large\itshape\centering}
 
 % empty the headers, footers, pagenumbers…
-%\pagestyle{empty}
+\pagestyle{empty}
 
 % Custom sectioning with secsty
 \RequirePackage{sectsty}
 
 % For links
-\RequirePackage[citecolor=blue, urlcolor=blue, colorlinks, linkcolor=black]{hyperref}
+\RequirePackage[citecolor=., urlcolor=., linkcolor=., colorlinks]{hyperref}
 
 \sectionfont{%                        
   \large % make sections smaller
@@ -104,29 +105,20 @@ related=false]{biblatex}
   % set specific indentation for personal information
   \noindent\hangindent=1em\hangafter=0
   % create a box to align two pieces of text
-  \parbox{2.5\spacebox}{% three times larger box
-    \textsc{#1}} % small caps entry name
-  #2 \par} % entry value
-
-% specific skill
-\newcommand{\sskill}[2]{
-  % set specific indentation for personal information
-  \noindent\hangindent=1em\hangafter=0
-  % create a box to align two pieces of text
-  \parbox{2\spacebox}{% three times larger box
-    \textsc{#1}} % small caps entry name
-  \linebreak[4]
-  \parbox{0.5\spacebox}{#2} \par \vspace{1em}} % entry value
+  \begin{minipage}[t]{0.1\linewidth}
+    #1
+  \end{minipage} \hfill \begin{minipage}[t]{0.8\linewidth}
+    {\footnotesize #2}
+  \end{minipage}
+  \par \vspace{0.5em}} % entry value
 
 % language level
 \newcommand{\lang}[3]{
   % set specific indentation for personal information
-  \noindent\hangindent=2em\hangafter=0
+  \noindent\hangindent=1em\hangafter=0
   % create a box to align two pieces of text
-  \parbox{\spacebox}{%
-    \textbf{#1}} % bold font entry name
-  \parbox{\spacebox}{#2}
-  #3 \par}    % entry value
+  \parbox{0.7\spacebox}{\textbf{#1}} \parbox{0.5\spacebox}{#2} \parbox{0.5\spacebox}{#3}% bold font entry name
+   \par \vspace{0.5em}}    % entry value
 
 % education entry
 \newcommand{\education}[4]{
@@ -134,9 +126,8 @@ related=false]{biblatex}
   \noindent  \textbf{#1}
   % at the right the duration
   \hfill 
-  \framebox{% duration inside a frame box
     \parbox{7em}{%
-      \centering\textbf{#2}}} \par
+      \centering #2} \par
   % new paragraph with the school in italics
   \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faMapPin \quad \textit{#3} \par
   % description with no hanging and in smaller text
@@ -151,9 +142,8 @@ related=false]{biblatex}
   \noindent \textbf{#1}
   % at the right the duration
   \hfill 
-  \framebox{% duration inside a frame box
-    \parbox{7em}{%
-      \centering\textbf{#2}}} \par
+  \parbox{7em}{%
+    \centering #2} \par
   % new paragraph with the school in italics
   \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faMapPin \quad \textit{#3} \par
   % description with no hanging and in smaller text
@@ -165,85 +155,13 @@ related=false]{biblatex}
 % grants and fellowships
 \newcommand{\grant}[4]{
   % name of the work
-  \noindent \textbf{#1}
-  % at the right the duration
-  \hfill 
-  \framebox{% duration inside a frame box
-    \parbox{7em}{%
-      \centering\textbf{#2}}} \par
-  % new paragraph with the school in italics
-  \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faUniversity \quad \textit{#3} \par
-  % description with no hanging and in smaller text
-  \vspace*{0.5em}
-  \noindent\hangindent=2em\hangafter=0 \faCheckSquareO \quad \small #4 
-  % back to normal size
-  \normalsize \par}
-
-% teaching experience
-\newcommand{\teaching}[4]{
-  % name of the work
-  \noindent \textbf{#1}
-  % at the right the duration
-  \hfill 
-  \framebox{% duration inside a frame box
-    \parbox{7em}{%
-      \centering\textbf{#2}}} \par
-  % new paragraph with the school in italics
-  \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faGraduationCap \quad \textit{#3} \par
-  % description with no hanging and in smaller text
-  \vspace*{0.5em}
-  \noindent\hangindent=2em\hangafter=0 \faHourglassEnd \quad \small #4 
-  % back to normal size
-  \normalsize \par}
-
-% students supervised
-\newcommand{\student}[4]{
-  % name of the work
-  \noindent \textbf{#1}
-  % at the right the duration
-  \hfill 
-  \framebox{% duration inside a frame box
-    \parbox{7em}{%
-      \centering\textbf{#2}}} \par
-  % new paragraph with the school in italics
-  \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faUniversity \quad \textit{#3} \par
-  % description with no hanging and in smaller text
-  \vspace*{0.5em}
-  \noindent\hangindent=2em\hangafter=0 \faCheckSquareO \quad \small #4 
-  % back to normal size
-  \normalsize \par}
+  \noindent \textbf{#1} $\cdot$ #2 \par
+  \noindent\hangindent=1em\hangafter=0 {\footnotesize #3} \par \vspace{0.5em}
+}
 
 % awards obtained
 \newcommand{\award}[4]{
   % name of the work
-  \noindent \textbf{#1}
-  % at the right the duration
-  \hfill 
-  \framebox{% duration inside a frame box
-    \parbox{7em}{%
-      \centering\textbf{#2}}} \par
-  % new paragraph with the school in italics
-  \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faTrophy \quad \textit{#3} \par
-  % description with no hanging and in smaller text
-  \vspace*{0.5em}
-  \noindent\hangindent=2em\hangafter=0 \faQuoteLeft \quad \small #4 
-  % back to normal size
-  \normalsize \par}
-
-% participation in conferences
-\newcommand{\conf}[4]{
-  % name of the work
-  \noindent \textbf{#1}
-  % at the right the duration
-  \hfill 
-  \framebox{% duration inside a frame box
-    \parbox{7em}{%
-      \centering\textbf{#2}}} \par
-  % new paragraph with the school in italics
-  \vspace{1em} \noindent\hangindent=2em\hangafter=0 \faUsers \quad \textit{#3} \par
-  % description with no hanging and in smaller text
-  \vspace*{0.5em}
-  \noindent\hangindent=2em\hangafter=0 \faQuoteLeft \quad \small #4 
-  % back to normal size
-  \normalsize \par}
-
+  \noindent \textbf{#1} $\cdot$ #2 \par
+  \noindent\hangindent=1em\hangafter=0 {\footnotesize #3} \par \vspace{0.5em}
+}

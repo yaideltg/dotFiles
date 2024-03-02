@@ -1423,6 +1423,13 @@ Facilitating the automatic loggin to the IRC server by using auth-source library
   (setq auth-sources '(password-store))
 #+end_src
 
+** password-store
+
+#+begin_src emacs-lisp
+  (use-package password-store
+    :ensure t)
+#+end_src
+
 * Markdown mode
 
 #+begin_src emacs-lisp
