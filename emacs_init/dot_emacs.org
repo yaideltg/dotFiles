@@ -249,6 +249,14 @@ And finally, we could use the =adaptive-wrap= package to avoid that the next lin
   ;;   )
 #+end_src
 
+** TAB behavior
+#+begin_src emacs-lisp
+  ;; See more at https://dougie.io/emacs/indentation/
+  (setq-default tab-width 4)
+
+  ;; Making electric-indent behave sanely
+  (setq-default electric-indent-inhibit t)
+#+end_src
 ** Edit the configuration file
 
 Set =C-c e= to edit this file:
@@ -735,6 +743,12 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
     (setq python-indent-offset 4))
 #+END_SRC
 
+* PHP
+#+begin_src emacs-lisp
+  (use-package php-mode
+    :ensure t)
+#+end_src
+
 * Latex
 
 #+BEGIN_SRC emacs-lisp
@@ -784,6 +798,13 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
       '(setcar (cdr (assoc 'output-pdf TeX-view-program-selection)) "Evince"))
     )
 #+END_SRC
+* YAML
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :ensure t
+    )
+#+end_src
 * Spell for windows
 # Info tomada de: https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html
 #+BEGIN_SRC emacs-lisp
@@ -866,6 +887,7 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     (org-mode . flyspell-mode)
     (org-mode . visual-line-mode)
     (org-mode . org-indent-mode)
+    ;; (before-save . org-update-all-dblocks)
     :config
 
     ;; (setq org-adapt-indentation nil)  ;; set the identation method in ORG mode
@@ -912,10 +934,15 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
              "* TODO %? \nCaptured on %U")
             ("h" "Health Tracking" entry (file+headline org-health-tracking-file "Daily data")
              "* %t \n:PROPERTIES:\n:barras: %?\n:pararelas: \n:planchas: \n:abdominales: \n:dificultad: \n:ánimo: \n:tiempo: \n:sueño: \n:ayuno: \n:caminar: \n:END:")
-            ("n" "Read later / take a note" entry (file+headline org-templates-location-var "Inbox")
-             "* Note from %a\nCaptured on: %U\n\n*Highlighted region*: %i\n\n%?")
+            ("r" "Read later / take a note" entry (file+headline org-templates-location-var "Inbox")
+             "* Note from %a\nCaptured on: %U\n\n*Highlighted region*: %(print \"%i\")\n%?")
+            ("n" "Newsletter / Curation" entry (file+headline org-templates-location-var "Content Reading / Curating")
+               "* Note from %a\nCaptured on: %U\n\n*Highlighted region*: %(print \"%i\")\n%?")
             ("c" "Coding" entry (file+headline org-templates-location-var "Inbox")
              "* TODO %? \nCaptured on %U\n*File*: [[file+emacs:%F]]\n*Highlighted region*:\n#+begin_src\n%i\n#+end_src\n\n")))
+
+    ;; Format the COLUMNS by default
+    (setq org-columns-default-format "%65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)")
 
     ;; Refile
     ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
@@ -955,7 +982,7 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                            (quote
                             (priority-down deadline-down effort-down)))
                           (org-agenda-max-entries 5)))
-              (tags-todo "-@project/+TODO"
+              (tags-todo "-@project-@excludeFromAgenda/+TODO"
                          ((org-agenda-overriding-header "TODOs")
                           (org-agenda-sorting-strategy
                            (quote
@@ -1234,7 +1261,7 @@ The following option displays by default the dates which are holidays in a diffe
     ;;
     ;; Tweaking the frontmatter
     (setq denote-org-front-matter
-          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    showall\n\n")
+          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    overview hideblocks\n\n")
     :bind
     ("C-c n f" . denote-open-or-create)
     ("C-c n n" . denote)
@@ -1383,6 +1410,14 @@ And add a key binding for it
   (global-set-key (kbd "C-c n w") 'my-denote-weekly-review)
 #+end_src
 
+* Ox-Hugo
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :ensure t
+    :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+    :after ox
+    )
+#+end_src
 * ERC
 
 Initial configuration of the user and chats to connect to.
