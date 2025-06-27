@@ -2,7 +2,7 @@
 #+author: yaidel
 #+date: 25-08-2023
 
-This is the repository for my configuration files. For the moment I am recording: Emacs, LaTeX, and the subscription list for Elfeed (in Org Mode).
+This is the repository for my configuration files. For the moment I am recording: Emacs, LaTeX.
 
 * Emacs configuration
 
@@ -14,9 +14,59 @@ In my =~/.emacs.d/init.el= file I have the following line
 
 This loads the named file, which states the initial configuration ~org-babel-load-file~ needs to load the =dot_emacs.org=, which contains the configuration by itself.
 
-* List of blogs
+** Loading Emacs throughout the =emacs --daemon= and =emacsclient=
 
-I always find interesting to discover new blogs in other Blogrolls. This is not a Blogroll by itself, but the complete list, in case you want to dig deeper.
+For some time I had have the file =~/.config/autostart/emacs-daemon.desktop= with the following content. This creates an application into the system named Emacs, but instead of opening a regular Emacs instance, it started the Emacs daemon, that is, a server to connect =emacsclient= to. I had setup this "application" to load on system startup: throughout GNOME Tweaks.
+
+#+begin_example
+[Desktop Entry]
+Name=Emacs
+GenericName=Text Editor
+Comment=Edit text
+Exec=/usr/bin/emacs --daemon
+Icon=emacs
+Type=Application
+Terminal=false
+Categories=Development;TextEditor;
+StartupNotify=true
+StartupWMClass=Emacs
+#+end_example
+
+Then, I created another application called Emacsclient by creating this file =/usr/share/applications/emacsclient.desktop=, with the following content. This was the =emacsclient= I opened every time I wanted to open Emacs, and it simply used the Emacs server which had been running all along since the system startup in the background.
+
+#+begin_example
+[Desktop Entry]
+Name=EmacsClient
+GenericName=Text Editor
+Comment=Edit text
+MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
+Exec=/usr/bin/emacsclient -c -a 'emacs' -F "'(fullscreen . maximized)" %F
+Icon=emacs
+Type=Application
+Terminal=false
+Categories=Development;TextEditor;
+StartupNotify=true
+StartupWMClass=Emacs
+#+end_example
+
+Whenever I wanted to shutdown the server, I hit =emacsclient -e "(kill-emacs)"= in the terminal. And to start it again, just hit =\emacs --daemon=.
+
+Note the =\= character before =emacs=. This is because I had established an alias in the =~/.bashrc= file, to open a client instead of a new Emacs instance:
+
+#+begin_example
+alias emacs="/usr/bin/emacsclient -c -a 'emacs' -F \"'(fullscreen . maximized)\""
+#+end_example
+
+*The advantages* of the previously described setup:
+1. No waiting time for Emacs to load the configuration, because I was opening a client, and it was the server who load the configuration on startup.
+2. When I closed the client, and then open another, there were all the previous buffers, searches, etc. available for me. Because all that session-persistent information is related to the server.
+
+
+ *The drawbacks*:
+ 1. Incompatibilities I found with packages =spacious-padding=, and =perspective=.
+
+
+Because of these incompatibilities, I decided to thrash this methodology, and stick to the old good "just open Emacs at startup, and never close it again".
 
 * LaTeX Styles
 

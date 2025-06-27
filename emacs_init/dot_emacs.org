@@ -35,12 +35,7 @@ Some key-bindings I use (see [[https://www.emacswiki.org/emacs/LineNumbers][this
   (global-set-key (kbd "<f5>") 'revert-buffer)
   (global-set-key (kbd "<f8>") 'eshell)
   (global-set-key (kbd "<f1>") 'display-line-numbers-mode)
-#+end_src
-
-Show line numbers by default in programming mode
-
-#+begin_src emacs-lisp
-  ;; (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  (global-set-key (kbd "C-c d") 'duplicate-line)
 #+end_src
 
 Use spaces instead of TABS
@@ -49,20 +44,26 @@ Use spaces instead of TABS
 (setq-default indent-tabs-mode nil)
 #+end_src
 
-** Window startup geometry
+Cursor shape
+
+#+begin_src emacs-lisp
+  (setq-default cursor-type 'bar)
+#+end_src
+
+** Window startup and geometry
 
 Here the frame can start maximized with the following option
 
 #+begin_src emacs-lisp
- ;; (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+  (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 #+end_src
 
 Or it can be set to a certain geometry with the following options
 
 #+begin_src emacs-lisp
-  (setq default-frame-alist
-        '((top . 60) (left . 150)
-          (width . 160) (height . 42)))
+  ;; (setq default-frame-alist
+  ;;       '((top . 60) (left . 150)
+  ;;         (width . 160) (height . 42)))
 #+end_src
 
 ** Theme
@@ -76,9 +77,10 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     (mapc #'disable-theme custom-enabled-themes)
     :config
     (setq ef-themes-mixed-fonts t
-	  ef-themes-variable-pitch-ui t)
+      ef-themes-variable-pitch-ui t)
     ;; Load the theme of choice:
-    (load-theme 'ef-light :no-confirm)
+    (load-theme 'ef-owl :no-confirm)
+    (setq ef-themes-to-toggle '(ef-light ef-owl))
     )
 #+end_src
 
@@ -87,17 +89,17 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     :ensure t
     :config
     (spacious-padding-mode 1)
+    (setq x-underline-at-descent-line t)
+    ;; The following are the default values, but I keep them here for visibility.
+    (setq spacious-padding-widths
+          '( :internal-border-width 5
+             :header-line-width 4
+             :mode-line-width 4
+             :tab-width 4
+             :right-divider-width 20
+             :scroll-bar-width 8
+             :fringe-width 8))
     )
-#+end_src
-
-The following code was provided by Prot, and it is needed to make =spacious-padding= remove the black borders it creates when Emacs is run with the daemon.
-
-#+begin_src emacs-lisp
-  (defun my-spacious-padding-remove-borders (_)
-    (spacious-padding-modify-frame-parameters nil)
-    (spacious-padding-set-invisible-dividers nil))
-
-  (add-hook 'after-make-frame-functions #'my-spacious-padding-remove-borders)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -277,6 +279,33 @@ Reload the configuration from this file when =C-c r= is pressed:
     (org-babel-load-file (expand-file-name "~/config/dotFiles/emacs_init/dot_emacs.org")))
   (global-set-key (kbd "C-c r") 'config-reload)
 #+END_SRC
+
+* Work-spaces
+
+To manage workspaces, I'm using the [[https://github.com/nex3/perspective-el][perspective]] package.
+
+#+begin_src emacs-lisp
+  (use-package perspective
+    :ensure t
+    :bind
+    ("C-x C-b" . persp-list-buffers)
+    :custom
+    (persp-mode-prefix-key (kbd "C-x x"))
+    :init
+    (persp-mode)
+    :config
+    (setq persp-state-default-file "~/.emacs.d/perspectives-workspaces")
+    (add-hook 'kill-emacs-hook #'persp-state-save)
+    ;; (add-hook 'kill-buffer-hook #'persp-state-save)
+    ;; Load perspectives on startup
+    (defun load-perspectives-on-startup ()
+      "Load perspectives state on startup."
+      (when (file-exists-p persp-state-default-file)
+        (persp-state-load persp-state-default-file)))
+    (add-hook 'emacs-startup-hook 'load-perspectives-on-startup)
+    ;; (add-hook 'emacs-startup-hook #'persp-state-load)
+    )
+#+end_src
 
 * Windows management
 
@@ -659,16 +688,22 @@ Summarizing, once everything is set up. You right-click on the body of the email
 This solution is not es elegant as the use of Gnus and Notmuch, but certainly will require much less setup than those two, and time, which I don't have right now for that. If you have not the time, or would like to continue with the visual interface oriented approach that is Thunderbird in face to Gnus and Notmuch, this is the solution to have links in your notes redirecting to the related  email.
 
 * Autocomplete
+
+I'm using company over auto-complete, unless it's a python buffer. In this case Jedi works with auto-complete, and therefore company gets deactivated. See the discussion on the [[id:ac9fae42-b41b-48b3-9d0c-f4ed9964d493][Python section]].
+
+#+NAME: auto-complete
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package auto-complete
-  ;;   :ensure t
-  ;;   :init
-  ;;   (progn
-  ;;     (ac-config-default)
-  ;;     (global-auto-complete-mode t)
-  ;;     ))
+    ;; (use-package auto-complete
+    ;;   :ensure t
+    ;;   :init
+    ;;   (progn
+    ;;     (ac-config-default)
+    ;;     (global-auto-complete-mode t)
+    ;;     ))
 #+END_SRC
 
+
+#+NAME: company
 #+begin_src emacs-lisp
   (use-package company
     :ensure t
@@ -679,7 +714,7 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
     (setq company-tooltip-flip-when-above t)
     (setq company-idle-delay 0.2)
     (setq company-tooltip-align-annotations t)
-    (setq company-minimum-prefix-length 3)
+    (setq company-minimum-prefix-length 2)
     (setq company-format-margin-function #'company-text-icons-margin)
     )
 
@@ -708,6 +743,12 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
   (require 'ispell)
 #+end_src
 * Python
+:PROPERTIES:
+:ID:       ac9fae42-b41b-48b3-9d0c-f4ed9964d493
+:END:
+
+Jedi uses [[auto-complete][auto-complete]], and not [[company][company]]. But I use company globally. So, when I open a python buffer, both auto-completion systems are active, and it gets a bit messy. Therefore, I need to deactivate company in python buffers, and let Jedi work with auto-complete.
+
 #+BEGIN_SRC emacs-lisp
   ;; (use-package jedi  ;; It need virtualenv to be installed in the pc (pip install virtualenv)
   ;;   :ensure t
@@ -715,6 +756,7 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
   ;;   (add-hook 'python-mode-hook 'jedi:setup)
   ;;   (add-hook 'python-mode-hook 'jedi:ac-setup)
   ;;   (add-hook 'python-mode-hook 'jedi:install-server)
+  ;;   (add-hook 'python-mode-hook (lambda () (company-mode -1)))
 
   ;;   :config
   ;;   (progn
@@ -728,10 +770,10 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defcustom python-shell-interpreter "python3"
-    "Default Python interpreter for shell."
-    :type 'string
-    :group 'python)
+  ;; (defcustom python-shell-interpreter "python3"
+  ;;   "Default Python interpreter for shell."
+  ;;   :type 'string
+  ;;   :group 'python)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -772,6 +814,11 @@ This solution is not es elegant as the use of Gnus and Notmuch, but certainly wi
     (setq bibtex-dialect 'biblatex)
     (setq reftex-cite-format 'biblatex)
     (setq reftex-default-bibliography '("/home/yaidel/config/latex_bib_databases/entireLibrary.bib"))
+    (setq TeX-command-list
+        (append TeX-command-list
+                '(("Biber" "biber %s" TeX-run-command nil t)
+                  ("BibTeX" "bibtex %s" TeX-run-command nil t))))
+    (setq TeX-BibTeX-program "biber")
     (setq LaTeX-section-hook
           '(LaTeX-section-heading
             LaTeX-section-title
@@ -1412,11 +1459,11 @@ And add a key binding for it
 
 * Ox-Hugo
 #+begin_src emacs-lisp
-  (use-package ox-hugo
-    :ensure t
-    :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
-    :after ox
-    )
+  ;; (use-package ox-hugo
+  ;;   :ensure t
+  ;;   :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  ;;   :after ox
+  ;;   )
 #+end_src
 * ERC
 
@@ -1689,6 +1736,18 @@ Figures polaroid like in a blog post
 #+begin_src emacs-lisp
   (use-package go-mode
     :ensure t)
+#+end_src
+
+* prog-mode hooks
+
+#+begin_src emacs-lisp
+  ;; (add-hook 'prog-mode-hook
+  ;;           (lambda ()
+  ;;             (setq truncate-lines nil)  ; Allow line wrapping
+  ;;             (setq show-trailing-whitespace t)  ; Show trailing whitespace
+  ;;             (highlight-indentation-mode 1)  ; Enable indentation highlighting
+  ;;             (setq display-line-numbers-mode t)  ; Show line numbers by default
+  ;;             ))
 #+end_src
 
 * Packages I want to try and probably use
