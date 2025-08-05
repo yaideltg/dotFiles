@@ -12,7 +12,7 @@ First of all, avoid the output of =custom-set-variables= to the =~/.emacs.d/init
 (setq-default custom-file null-device)
 #+end_src
 
-Then, inhibit the startup bottom buffer. If someone like it just comment the following block.
+Then, inhibit the startup buffer.
 
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t) 
@@ -68,7 +68,9 @@ Or it can be set to a certain geometry with the following options
 
 ** Theme
 
-One theme I used for a long time was Leuven which can be loaded with ~(load-theme 'leuven t)~, however [[https://protesilaos.com/][Protesilaos]]' themes are really nice alternatives which have been gratefully welcomed in the Emacs comunity. In my case I am using the =ef-themes= because they are really colorful (in a balanced maner). Other Prot's packages complement the theme:
+One theme I used for a long time was Leuven which can be loaded with ~(load-theme 'leuven t)~, however [[https://protesilaos.com/][Protesilaos]]' themes are really nice alternatives which have been gratefully welcomed in the Emacs comunity. In my case I am using the [[https://protesilaos.com/emacs/ef-themes][ef-themes]] because they are really colorful (in a balanced maner).
+
+Also note that we can set two, or more, themes in the variable =ef-themes-to-toggle=, and then call function =M-x ef-theme-toggle= to change between them. This is very convenient to have a dark and a light theme, and change between them as needed.
 
 #+begin_src emacs-lisp
   (use-package ef-themes
@@ -83,6 +85,8 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     (setq ef-themes-to-toggle '(ef-light ef-owl))
     )
 #+end_src
+
+Other Prot's packages complement the themes. [[https://protesilaos.com/emacs/spacious-padding][spacious-padding]] provides a global minor mode to increase the spacing/padding of Emacs windows and frames.
 
 #+begin_src emacs-lisp
   (use-package spacious-padding
@@ -101,6 +105,8 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
              :fringe-width 8))
     )
 #+end_src
+
+Then, [[https://protesilaos.com/emacs/fontaine][fontaine]] allows the user to define detailed font configurations and set them on demand. For example, one can have a regular-editing preset and another for presentation-mode (these are arbitrary, user-defined symbols): the former uses small fonts which are optimised for writing, while the latter applies typefaces that are pleasant to read at comfortable point sizes.
 
 #+begin_src emacs-lisp
   (use-package fontaine
@@ -163,6 +169,8 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     )
 #+end_src
 
+[[https://protesilaos.com/emacs/pulsar][pulsar]] is a small package that temporarily highlights the current line or region after a given function is invoked. 
+
 #+begin_src emacs-lisp
   (use-package pulsar
     :ensure t
@@ -177,6 +185,8 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     )
 #+end_src
 
+[[https://protesilaos.com/emacs/lin][lin]] is a stylistic enhancement for Emacs' built-in =hl-line-mode=. It remaps the hl-line face (or equivalent) buffer-locally to a style that is optimal for major modes where line selection is the primary mode of interaction.
+
 #+BEGIN_SRC emacs-lisp
   (use-package lin
     :ensure t
@@ -187,7 +197,7 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
     )
 #+END_SRC
 
-** UTF-8 encoding:
+** Set UTF-8 encoding
 
 #+BEGIN_SRC emacs-lisp
   (setq locale-coding-system 'utf-8)
@@ -197,7 +207,7 @@ One theme I used for a long time was Leuven which can be loaded with ~(load-them
   (prefer-coding-system 'utf-8)
 #+END_SRC
 
-** Change 'yes or no' prompts to 'y or n':
+** Change 'yes or no' prompts to 'y or n'
 
 #+BEGIN_SRC emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
@@ -308,8 +318,6 @@ To manage workspaces, I'm using the [[https://github.com/nex3/perspective-el][pe
 #+end_src
 
 * Windows management
-
-
 
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
@@ -631,6 +639,17 @@ When typing in the M-x, it shows a list of possibilities
     :config
     (which-key-mode))
 #+END_SRC
+** Selecting things
+
+=expand-region= is a package that makes very convenient the selection process in Emacs. It starts by selecting a word, and incrementally selects other semantic units. See at this repository: https://github.com/magnars/expand-region.el.
+
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :bind ("C-=" . er/expand-region)
+    )
+#+end_src
+
 ** Try
 
 #+begin_src emacs-lisp
@@ -638,6 +657,21 @@ When typing in the M-x, it shows a list of possibilities
     :ensure t
     )
 #+end_src
+** AI integration with Emacs
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :ensure t
+    :config
+    (setq gptel-log-level 'info)
+    (setq gptel-model 'gemini-1.5-flash)
+    (setq gptel-default-mode 'org-mode)
+    (setq gptel-backend (gptel-make-gemini "Gemini"
+                   :key (gptel-api-key-from-auth-source "generativelanguage.googleapis.com")
+                   :stream t))
+    )
+#+end_src
+
 * Org-mode links integration with Thunderbird
 
 Some years ago it was possible to use the [[https://github.com/mikehardy/thunderlink][Thunderlink]] plugin to obtain a "link" to a specific email, and when you clicked that link it would open Thunderbird with a focus on the required email. However, that project died. Fortunately, [[https://camiel.bouchier.be/en/about-me][Camiel Bouchier]] made the necessary re-writing of the code need to make it work with newer versions of Thunderbird's API, in what it's called [[https://github.com/CamielBouchier/cb_thunderlink][cb_thunderlink]]. For the time of writing ([2023-08-26 Sat]) it is still maintained, let's hope it keeps that way.
@@ -787,8 +821,8 @@ Jedi uses [[auto-complete][auto-complete]], and not [[company][company]]. But I 
 
 * PHP
 #+begin_src emacs-lisp
-  (use-package php-mode
-    :ensure t)
+  ;; (use-package php-mode
+    ;; :ensure t)
 #+end_src
 
 * Latex
@@ -1455,61 +1489,6 @@ And add a key binding for it
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c n w") 'my-denote-weekly-review)
-#+end_src
-
-* Ox-Hugo
-#+begin_src emacs-lisp
-  ;; (use-package ox-hugo
-  ;;   :ensure t
-  ;;   :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
-  ;;   :after ox
-  ;;   )
-#+end_src
-* ERC
-
-Initial configuration of the user and chats to connect to.
-
-#+begin_src emacs-lisp
-  (setq erc-server "irc.libera.chat"
-	erc-port "6697"
-	erc-nick "yaidel"
-	erc-user-full-name "yaidel"
-	erc-track-shorten-start 8
-	erc-autojoin-channels-alist '(("irc.libera.chat" . "#emacs"))
-	erc-kill-buffer-on-part t
-	erc-auto-query 'bury)
-#+end_src
-
-Configuration of what to show or not on the cannels and the changes in status of them and thir participants
-
-#+begin_src emacs-lisp
-  (setq ;;erc-track-exclude '("#emacs")
-   erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
-   erc-hide-list '("JOIN" "NICK" "QUIT" "MODE" "AWAY")
-   erc-track-exclude-server-buffer t
-   erc-interpret-mirc-color t)
-#+end_src
-
-This causes ERC to connect to the Libera.Chat network upon hitting C-c f
-#+begin_src emacs-lisp
-  (global-set-key "\C-cf" (lambda () (interactive)
-			    (erc-tls :server "irc.libera.chat" :port "6697"
-				     :nick "yaidel")))
-#+end_src
-
-Facilitating the automatic loggin to the IRC server by using auth-source library.
-
-#+begin_src emacs-lisp
-  (setq erc-prompt-for-password nil)
-  (setq erc-prompt-for-nickserv-password nil)
-  (setq auth-sources '(password-store))
-#+end_src
-
-** password-store
-
-#+begin_src emacs-lisp
-  (use-package password-store
-    :ensure t)
 #+end_src
 
 * Markdown mode
