@@ -657,6 +657,21 @@ When typing in the M-x, it shows a list of possibilities
     :ensure t
     )
 #+end_src
+** TRAMP
+
+#+begin_src emacs-lisp
+  (setq tramp-default-host-alist
+        '(
+          ;; Cluster Copernicus AMU
+          ("scp" "ytoledo" "" "login.mesocentre.univ-amu.fr#8822")
+          ))
+
+  (setq tramp-default-user-alist
+        '(
+          ("scp" "login.mesocentre.univ-amu.fr#8822" "ytoledo")
+          ))
+#+end_src
+
 ** AI integration with Emacs
 
 #+begin_src emacs-lisp
