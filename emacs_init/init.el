@@ -13,6 +13,8 @@
         ("nongnu" . 1)))
 
 (package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
 ;; USE-PACKAGE TO SIMPLIFY THE CONFIG FILE
 (unless (package-installed-p 'use-package)

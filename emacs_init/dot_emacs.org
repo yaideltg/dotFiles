@@ -359,13 +359,13 @@ See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenien
     ;; (setq vertico-scroll-margin 0)
 
     ;; Show more candidates
-    ;; (setq vertico-count 20)
+    (setq vertico-count 20)
 
     ;; Grow and shrink the Vertico minibuffer
-    ;; (setq vertico-resize t)
+    (setq vertico-resize t)
 
     ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
-    ;; (setq vertico-cycle t)
+    (setq vertico-cycle t)
     )
 #+end_src
 ** Savehist configuration
@@ -377,16 +377,32 @@ See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenien
 #+end_src
 ** Orderless configuration
 #+begin_src emacs-lisp
-  (use-package orderless
-    :ensure t
-    :init
-    ;; Configure a custom style dispatcher (see the Consult wiki)
-    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-    (setq completion-styles '(orderless)
-	  completion-category-defaults nil
-	  completion-category-overrides '((file (styles partial-completion))))
-    )
+    (use-package orderless
+      :ensure t
+      :init
+
+      ;; Configure a custom style dispatcher (see the Consult wiki)
+      (defun +orderless-dispatch (pattern index _total)
+        "Doom Emacs style dispatch for Orderless. Select matching style based on pattern prefixes."
+        (cond
+         ;; "=" prefix = literal match
+         ((string-prefix-p "=" pattern) 'orderless-literal)
+         ;; "!" prefix = regexp match
+         ((string-prefix-p "!" pattern) 'orderless-regexp)
+         ;; "~" prefix = fuzzy match
+         ((string-prefix-p "~" pattern) 'orderless-flex)
+         ;; default = nil, use standard Orderless styles
+         (t nil)))
+
+      ;; Set the dispatcher and component separator
+      (setq orderless-style-dispatchers '(+orderless-dispatch)
+            orderless-component-separator #'orderless-escapable-split-on-space)
+
+      ;; Completion system settings
+      (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))))
+      )
 #+end_src
 ** Consult configuration
 #+begin_src emacs-lisp
@@ -420,9 +436,7 @@ See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenien
   (use-package marginalia
     :ensure t
     ;; Either bind `marginalia-cycle` globally or only in the minibuffer
-    :bind (("M-A" . marginalia-cycle)
-	   :map minibuffer-local-map
-	   ("M-A" . marginalia-cycle))
+    :bind (("M-A" . marginalia-cycle))
 
     ;; The :init configuration is always executed (Not lazy!)
     :init
@@ -464,7 +478,6 @@ See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenien
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
-
 * General packages
 ** Dired
 The Dired documentation can be found by =C-h m= on the buffer, ot at [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][the GNU manual]].
@@ -675,99 +688,91 @@ When typing in the M-x, it shows a list of possibilities
 ** AI integration with Emacs
 
 #+begin_src emacs-lisp
-  (use-package gptel
+  ;; (use-package gptel
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq gptel-log-level 'info)
+  ;;   (setq gptel-model 'gemini-1.5-flash)
+  ;;   (setq gptel-default-mode 'org-mode)
+  ;;   (setq gptel-backend (gptel-make-gemini "Gemini"
+  ;;                  :key (gptel-api-key-from-auth-source "generativelanguage.googleapis.com")
+  ;;                  :stream t))
+  ;;   )
+#+end_src
+
+* Programming IDE
+
+Core LSP functionality (works for all languages)
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
     :ensure t
+    :hook ((prog-mode . lsp-deferred))  ;; start LSP for any programming mode
+    :commands (lsp lsp-deferred)
     :config
-    (setq gptel-log-level 'info)
-    (setq gptel-model 'gemini-1.5-flash)
-    (setq gptel-default-mode 'org-mode)
-    (setq gptel-backend (gptel-make-gemini "Gemini"
-                   :key (gptel-api-key-from-auth-source "generativelanguage.googleapis.com")
-                   :stream t))
+    (setq lsp-headerline-breadcrumb-enable nil)
+    (setq lsp-idle-delay 0.2)
+    (setq lsp-log-io nil)
+    (setq lsp-enable-symbol-highlighting t)
+    (setq lsp-completion-provider :capf)
+    ;; Keybinding
+    (define-key lsp-mode-map (kbd "M-.") #'lsp-find-definition)
+    (define-key lsp-mode-map (kbd "M-,") #'lsp-ui-imenu)
+    (define-key lsp-mode-map (kbd "M-?") #'lsp-find-references)
+    ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
+    ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
+    ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
     )
 #+end_src
 
-* Org-mode links integration with Thunderbird
+Optional UI enhancements for LSP (hover docs, sideline, etc.)
 
-Some years ago it was possible to use the [[https://github.com/mikehardy/thunderlink][Thunderlink]] plugin to obtain a "link" to a specific email, and when you clicked that link it would open Thunderbird with a focus on the required email. However, that project died. Fortunately, [[https://camiel.bouchier.be/en/about-me][Camiel Bouchier]] made the necessary re-writing of the code need to make it work with newer versions of Thunderbird's API, in what it's called [[https://github.com/CamielBouchier/cb_thunderlink][cb_thunderlink]]. For the time of writing ([2023-08-26 Sat]) it is still maintained, let's hope it keeps that way.
-
-The (sort of) documentation for the plugin is on [[https://camiel.bouchier.be/en/cb_thunderlink][this post]] of Camiel's website. And to use it in conjunction with Emacs it is also needed an Elisp workaround to tell emacs how to respond when =org-open-at-point= is executed on one of =cb_thunderlink='s link.
-1) The installation of the =cb_thunderlink= plugin is straightforward in the Thunderbird Plugin Store.
-2) The workaround, on the other hand, I got from [[https://vxlabs.com/][vxlabs]]' website, where he explains how to [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]]. As you may have noticed, the workaround was written for =thunderlink=, not for =cb_thunderlink=, so I have made some modifications to it. Also, there was a conditional to check if the system was Mac or not, I removed that part too as I do not need it. See the code below:
-
-#+begin_src emacs-lisp
-  (setq thunderbird-program "thunderbird")
-
-  (defun org-message-thunderlink-open (slash-message-id)
-    "Handler for org-link-set-parameters that converts a standard message:// link into
-   a thunderlink and then invokes thunderbird."
-    ;; remove any / at the start of slash-message-id to create real message-id
-    (let ((message-id
-           (replace-regexp-in-string (rx bos (* "/"))
-                                     ""
-                                     slash-message-id)))
-      (kill-new (concat "cbthunderlink://" message-id))
-      (start-process
-       (concat "cbthunderlink: " message-id)
-       nil
-       thunderbird-program
-       "-cbthunderlink"
-       (concat "cbthunderlink://" message-id)
-       )))
-  ;; on message://aoeu link, this will call handler with //aoeu
-  (org-link-set-parameters "message" :follow #'org-message-thunderlink-open)
+#+begin_src emacs-lisp  
+  (use-package lsp-ui
+    :ensure t
+    :after lsp-mode
+    :hook (lsp-mode . lsp-ui-mode)
+    :config
+    (setq lsp-ui-doc-enable t
+          lsp-ui-doc-delay 0.5
+          lsp-ui-doc-position 'at-point
+          lsp-ui-sideline-show-diagnostics t
+          lsp-ui-sideline-show-hover t
+          lsp-ui-sideline-show-code-actions t))
 #+end_src
 
-A link generated with =cb_thunderlink= looks something like this:
+Hover docs (LSP integrates with =eldoc=)
 
-#+begin_example
-cbthunderlink://MjAyMy0wOC0yNVQxNToyOTowMC4wMDBaO05h
-#+end_example
+#+begin_src emacs-lisp
+  (use-package eldoc
+    :ensure t
+    :hook (lsp-mode . eldoc-mode))
+#+end_src
 
-In the article [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]] they suggest to write in your notes =message= instead of =cbthunderlink=, this way you can use something else in the future in case =cb_thunderlink= also dies as the linking system in your notes will not depend on it (at least completely).
+Diagnostics/linting framework (works with all languages)
 
-In the configuration of the =cb_thunderlink= plugin you can manage the format to copy the email link. In my case I have made one called =emacsOrgLink=, which is set to ~[[message://$cblink$][$subject$]]~ to comply with Org-mode link format. Note that the name of the link will be the subject of the email.
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+#+end_src
 
-The code above will associate the function ~org-message-thunderlink-open~ to the =message= key when =org-open-at-point= is executed on these links, and then it will replace =message= with =cbthunderlink= to pass the link to Thunderbird. Of course this part can be avoided by just letting the links in their original format (starting with =cbthunderlink=), and the function would be really simple. Once more, I chose =message= over =cbthunderlink= because =message= is built in Emacs. Nevertheless, I do not think if I stop using Thunderbird and go to Mu4e or Gnus the links would work (because of their =messageid= being different in Mu4e-Gnus VS =cb_thunderlink=). Anyway see [[https://vxlabs.com/2023/08/08/open-message/-links-with-mu4e-or-fastmail/][this recent post]] of vxlab which is similar to the one discussed above, but for Mu4e and fastmail. You can decide which format to use.
+Auto-completion
 
-The last point to highlight is the use of ~(kill-new (concat "cbthunderlink://" message-id))~. Because of limitations of the Thunderbird API, which dropped support for the =thunderbird -thunderlink <email-link>= clickable feature, =cb_thunderlink= cannot directly open the emial is some systems (see documentation). In those systems where it cannot simulate the needed behavior and open the specific email directly, instead, it creates a button on the top-right corner (close to the "Display Thunderbird menu"), which once clicked will use the content of the clipboard to open the corresponding email, in case the content of the clipboard is a =cb_thunderlink= email link. This line of code copy the email link to the clipboard so we can access the desired email.
-
-Summarizing, once everything is set up. You right-click on the body of the email in Thunderbird, go to the =cb_thunderlink= menu entry (usually on the bottom), and copy the formatted link you established (=emacsOrgLink= in my case). Next, past it in Emacs. Once you need to use it, just execute =org-open-at-point= (C-c C-o), and it will open Thunderbird, but in some cases not yet the specific email. If this functionality is missing, to open the specific email just click on the =cb_thunderlink= button on the top-right region. You should see now the email.
-
-This solution is not es elegant as the use of Gnus and Notmuch, but certainly will require much less setup than those two, and time, which I don't have right now for that. If you have not the time, or would like to continue with the visual interface oriented approach that is Thunderbird in face to Gnus and Notmuch, this is the solution to have links in your notes redirecting to the related  email.
-
-* Autocomplete
-
-I'm using company over auto-complete, unless it's a python buffer. In this case Jedi works with auto-complete, and therefore company gets deactivated. See the discussion on the [[id:ac9fae42-b41b-48b3-9d0c-f4ed9964d493][Python section]].
-
-#+NAME: auto-complete
-#+BEGIN_SRC emacs-lisp
-    ;; (use-package auto-complete
-    ;;   :ensure t
-    ;;   :init
-    ;;   (progn
-    ;;     (ac-config-default)
-    ;;     (global-auto-complete-mode t)
-    ;;     ))
-#+END_SRC
-
-
-#+NAME: company
 #+begin_src emacs-lisp
   (use-package company
     :ensure t
-    :init
-    ;;(setq global-company-mode t)
+    :hook (prog-mode . company-mode)
     :config
     (setq company-tooltip-align-annotations t)
     (setq company-tooltip-flip-when-above t)
     (setq company-idle-delay 0.2)
     (setq company-tooltip-align-annotations t)
-    (setq company-minimum-prefix-length 2)
+    (setq company-minimum-prefix-length 1)
     (setq company-format-margin-function #'company-text-icons-margin)
     )
 
-  (add-hook 'after-init-hook 'global-company-mode)
+  ;; (add-hook 'after-init-hook 'global-company-mode)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -775,6 +780,49 @@ I'm using company over auto-complete, unless it's a python buffer. In this case 
     :ensure t
     )
 #+end_src
+
+** Python specific layer
+
+#+begin_src emacs-lisp
+  (use-package lsp-pyright
+    :ensure t
+    :after lsp-mode
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-pyright)
+                           (lsp-deferred)))  ;; start LSP just for Python
+    :config
+    (setq lsp-pyright-multi-root nil)
+    (setq lsp-pyright-auto-import-completions t)
+    (setq lsp-pyright-use-library-code-for-types t))
+#+end_src
+
+Automatic code formatting using Black
+
+#+begin_src emacs-lisp
+  (use-package blacken
+    :ensure t
+    :hook (python-mode . blacken-mode)
+    :config
+    (setq blacken-line-length 88))
+#+end_src
+
+Optional: Python-specific indentation setting
+
+#+begin_src emacs-lisp
+  (setq python-indent-offset 4)
+#+end_src
+
+Optional: sidebar with symbols and project browser
+
+#+begin_src emacs-lisp
+  ;; (use-package treemacs
+  ;; :ensure t)
+
+  ;; (use-package lsp-treemacs
+  ;;   :ensure t
+  ;;   :after lsp)
+#+end_src
+
 * Projectile
 
 #+begin_src emacs-lisp
@@ -790,54 +838,6 @@ I'm using company over auto-complete, unless it's a python buffer. In this case 
 #+begin_src emacs-lisp
   (setq ispell-program-name "aspell")
   (require 'ispell)
-#+end_src
-* Python
-:PROPERTIES:
-:ID:       ac9fae42-b41b-48b3-9d0c-f4ed9964d493
-:END:
-
-Jedi uses [[auto-complete][auto-complete]], and not [[company][company]]. But I use company globally. So, when I open a python buffer, both auto-completion systems are active, and it gets a bit messy. Therefore, I need to deactivate company in python buffers, and let Jedi work with auto-complete.
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package jedi  ;; It need virtualenv to be installed in the pc (pip install virtualenv)
-  ;;   :ensure t
-  ;;   :init
-  ;;   (add-hook 'python-mode-hook 'jedi:setup)
-  ;;   (add-hook 'python-mode-hook 'jedi:ac-setup)
-  ;;   (add-hook 'python-mode-hook 'jedi:install-server)
-  ;;   (add-hook 'python-mode-hook (lambda () (company-mode -1)))
-
-  ;;   :config
-  ;;   (progn
-  ;;     (setq jedi:environment-root "jedi")  ; or any other name you like
-  ;;     (setq jedi:environment-virtualenv
-  ;;           (append python-environment-virtualenv
-  ;;                   '("--python" "/usr/bin/python3")))
-  ;;     (setq jedi:complete-on-dot t)
-  ;;     (setq jedi:get-in-function-call-delay 1)
-  ;;     ))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; (defcustom python-shell-interpreter "python3"
-  ;;   "Default Python interpreter for shell."
-  ;;   :type 'string
-  ;;   :group 'python)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; It is a package for documentation, completion, syntax check ...
-  (use-package elpy
-    :ensure t
-    :config
-    (elpy-enable)
-    (setq python-indent-offset 4))
-#+END_SRC
-
-* PHP
-#+begin_src emacs-lisp
-  ;; (use-package php-mode
-    ;; :ensure t)
 #+end_src
 
 * Latex
@@ -1281,7 +1281,56 @@ Enable Markdown export back-end (see [[https://orgmode.org/manual/Exporting.html
     (setq org-latex-classes nil))
 #+end_src
 
-* Org-cite and citations handling
+** Org-mode links integration with Thunderbird
+
+Some years ago it was possible to use the [[https://github.com/mikehardy/thunderlink][Thunderlink]] plugin to obtain a "link" to a specific email, and when you clicked that link it would open Thunderbird with a focus on the required email. However, that project died. Fortunately, [[https://camiel.bouchier.be/en/about-me][Camiel Bouchier]] made the necessary re-writing of the code need to make it work with newer versions of Thunderbird's API, in what it's called [[https://github.com/CamielBouchier/cb_thunderlink][cb_thunderlink]]. For the time of writing ([2023-08-26 Sat]) it is still maintained, let's hope it keeps that way.
+
+The (sort of) documentation for the plugin is on [[https://camiel.bouchier.be/en/cb_thunderlink][this post]] of Camiel's website. And to use it in conjunction with Emacs it is also needed an Elisp workaround to tell emacs how to respond when =org-open-at-point= is executed on one of =cb_thunderlink='s link.
+1) The installation of the =cb_thunderlink= plugin is straightforward in the Thunderbird Plugin Store.
+2) The workaround, on the other hand, I got from [[https://vxlabs.com/][vxlabs]]' website, where he explains how to [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]]. As you may have noticed, the workaround was written for =thunderlink=, not for =cb_thunderlink=, so I have made some modifications to it. Also, there was a conditional to check if the system was Mac or not, I removed that part too as I do not need it. See the code below:
+
+#+begin_src emacs-lisp
+  (setq thunderbird-program "thunderbird")
+
+  (defun org-message-thunderlink-open (slash-message-id)
+    "Handler for org-link-set-parameters that converts a standard message:// link into
+   a thunderlink and then invokes thunderbird."
+    ;; remove any / at the start of slash-message-id to create real message-id
+    (let ((message-id
+           (replace-regexp-in-string (rx bos (* "/"))
+                                     ""
+                                     slash-message-id)))
+      (kill-new (concat "cbthunderlink://" message-id))
+      (start-process
+       (concat "cbthunderlink: " message-id)
+       nil
+       thunderbird-program
+       "-cbthunderlink"
+       (concat "cbthunderlink://" message-id)
+       )))
+  ;; on message://aoeu link, this will call handler with //aoeu
+  (org-link-set-parameters "message" :follow #'org-message-thunderlink-open)
+#+end_src
+
+A link generated with =cb_thunderlink= looks something like this:
+
+#+begin_example
+cbthunderlink://MjAyMy0wOC0yNVQxNToyOTowMC4wMDBaO05h
+#+end_example
+
+In the article [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]] they suggest to write in your notes =message= instead of =cbthunderlink=, this way you can use something else in the future in case =cb_thunderlink= also dies as the linking system in your notes will not depend on it (at least completely).
+
+In the configuration of the =cb_thunderlink= plugin you can manage the format to copy the email link. In my case I have made one called =emacsOrgLink=, which is set to ~[[message://$cblink$][$subject$]]~ to comply with Org-mode link format. Note that the name of the link will be the subject of the email.
+
+The code above will associate the function ~org-message-thunderlink-open~ to the =message= key when =org-open-at-point= is executed on these links, and then it will replace =message= with =cbthunderlink= to pass the link to Thunderbird. Of course this part can be avoided by just letting the links in their original format (starting with =cbthunderlink=), and the function would be really simple. Once more, I chose =message= over =cbthunderlink= because =message= is built in Emacs. Nevertheless, I do not think if I stop using Thunderbird and go to Mu4e or Gnus the links would work (because of their =messageid= being different in Mu4e-Gnus VS =cb_thunderlink=). Anyway see [[https://vxlabs.com/2023/08/08/open-message/-links-with-mu4e-or-fastmail/][this recent post]] of vxlab which is similar to the one discussed above, but for Mu4e and fastmail. You can decide which format to use.
+
+The last point to highlight is the use of ~(kill-new (concat "cbthunderlink://" message-id))~. Because of limitations of the Thunderbird API, which dropped support for the =thunderbird -thunderlink <email-link>= clickable feature, =cb_thunderlink= cannot directly open the emial is some systems (see documentation). In those systems where it cannot simulate the needed behavior and open the specific email directly, instead, it creates a button on the top-right corner (close to the "Display Thunderbird menu"), which once clicked will use the content of the clipboard to open the corresponding email, in case the content of the clipboard is a =cb_thunderlink= email link. This line of code copy the email link to the clipboard so we can access the desired email.
+
+Summarizing, once everything is set up. You right-click on the body of the email in Thunderbird, go to the =cb_thunderlink= menu entry (usually on the bottom), and copy the formatted link you established (=emacsOrgLink= in my case). Next, past it in Emacs. Once you need to use it, just execute =org-open-at-point= (C-c C-o), and it will open Thunderbird, but in some cases not yet the specific email. If this functionality is missing, to open the specific email just click on the =cb_thunderlink= button on the top-right region. You should see now the email.
+
+This solution is not es elegant as the use of Gnus and Notmuch, but certainly will require much less setup than those two, and time, which I don't have right now for that. If you have not the time, or would like to continue with the visual interface oriented approach that is Thunderbird in face to Gnus and Notmuch, this is the solution to have links in your notes redirecting to the related  email.
+
+** Org-cite and citations handling
 To configure the citations within Org, we have its Org-cite functionality. More information about this
 functionality can be found in the follwoing sources:
 - [[https://orgmode.org/manual/Citation-handling.html#Citation-handling][Citation handling (The Org Manual)]]
@@ -1725,23 +1774,11 @@ Figures polaroid like in a blog post
     :ensure t)
 #+end_src
 
-* Go-lang mode
+* Go-Lang mode
 
 #+begin_src emacs-lisp
   (use-package go-mode
     :ensure t)
-#+end_src
-
-* prog-mode hooks
-
-#+begin_src emacs-lisp
-  ;; (add-hook 'prog-mode-hook
-  ;;           (lambda ()
-  ;;             (setq truncate-lines nil)  ; Allow line wrapping
-  ;;             (setq show-trailing-whitespace t)  ; Show trailing whitespace
-  ;;             (highlight-indentation-mode 1)  ; Enable indentation highlighting
-  ;;             (setq display-line-numbers-mode t)  ; Show line numbers by default
-  ;;             ))
 #+end_src
 
 * Packages I want to try and probably use
