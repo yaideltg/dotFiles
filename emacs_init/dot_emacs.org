@@ -722,6 +722,8 @@ Core LSP functionality (works for all languages)
     ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
     ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
     ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
+    (with-eval-after-load 'lsp-mode
+      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none")))
     )
 #+end_src
 
@@ -848,25 +850,6 @@ Optional: Python-specific indentation setting
 
 ** Containerization
 
-[[https://github.com/Silex/docker.el][Docker package]] for Emacs, like Magit for Git.
-
-Note: I'm getting an error saying package =docker= is not found ????
-
-#+begin_src emacs-lisp
-  ;; (use-package docker
-    ;; :ensure t
-    ;; :bind ("C-c d" . docker)
-    ;; :config
-    ;; (setf docker-command "docker"
-          ;; docker-compose-command "docker-compose"
-          ;; docker-container-tramp-method "docker")
-    ;; )
-
-  ;; (use-package tramp-container
-    ;; :ensure t
-    ;; )
-#+end_src
-
 Dockerfile syntax and highlight via [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]].
 
 #+begin_src emacs-lisp
@@ -888,14 +871,7 @@ Also, for =apptainer/singularity= there's not much support yet. Everything I cou
     :config
     ;; Add the extension files to automatically load the mode
     (add-to-list 'auto-mode-alist '("\\.apptainer\\'" . apptainer-mode))
-    (add-to-list 'auto-mode-alist '("\\.def\\'" . apptainer-mode))
-    ;; Configure lsp-mode to ignore apptainer-mode
-    (eval-after-load "lsp-mode"
-      '(progn
-         (setq lsp-language-id-configuration
-               '(apptainer-mode nil))
-         ))
-    )
+    (add-to-list 'auto-mode-alist '("\\.def\\'" . apptainer-mode)))
 #+end_src
 
 ** YAML
