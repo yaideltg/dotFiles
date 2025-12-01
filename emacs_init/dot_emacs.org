@@ -117,13 +117,13 @@ Then, [[https://protesilaos.com/emacs/fontaine][fontaine]] allows the user to de
   
     (setq fontaine-presets
           '((tiny
-             :default-family "Iosevka Comfy Wide Fixed"
+             :default-family "Aporetic Serif"
              :default-height 70)
             (small
-             :default-family "Iosevka Comfy Fixed"
+             :default-family "Aporetic Serif"
              :default-height 90)
             (regular
-             :default-height 130)
+             :default-height 140)
             (medium
              :default-height 150)
             (large
@@ -142,7 +142,7 @@ Then, [[https://protesilaos.com/emacs/fontaine][fontaine]] allows the user to de
              ;; I keep all properties for didactic purposes, but most can be
              ;; omitted.  See the fontaine manual for the technicalities:
              ;; <https://protesilaos.com/emacs/fontaine>.
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Serif Mono"
              :default-weight regular
              :default-height 100
              :fixed-pitch-family nil ; falls back to :default-family
@@ -151,7 +151,7 @@ Then, [[https://protesilaos.com/emacs/fontaine][fontaine]] allows the user to de
              :fixed-pitch-serif-family nil ; falls back to :default-family
              :fixed-pitch-serif-weight nil ; falls back to :default-weight
              :fixed-pitch-serif-height 1.0
-             :variable-pitch-family "Iosevka Comfy Duo"
+             :variable-pitch-family "Aporetic Serif"
              :variable-pitch-weight nil
              :variable-pitch-height 1.0
              :bold-family nil ; use whatever the underlying face has
@@ -787,13 +787,26 @@ Auto-completion
   (use-package lsp-pyright
     :ensure t
     :after lsp-mode
-    :hook (python-mode . (lambda ()
-                           (require 'lsp-pyright)
-                           (lsp-deferred)))  ;; start LSP just for Python
+    ;; :hook (python-mode . (lambda ()
+                           ;; (require 'lsp-pyright)
+                           ;; (lsp-deferred)))  ;; start LSP just for Python
     :config
+    (setq lsp-client-packages '(lsp-pyright))
     (setq lsp-pyright-multi-root nil)
     (setq lsp-pyright-auto-import-completions t)
-    (setq lsp-pyright-use-library-code-for-types t))
+    (setq lsp-pyright-use-library-code-for-types t)
+    (lsp-dependency
+     'pyright
+     '(:system "~/.venvs/pyright-venv/bin/pyright"))
+    ;; Use pyright inside your virtual environment
+    (setq lsp-pyright-langserver-command
+          (list
+           (expand-file-name "~/.venvs/pyright-venv/bin/pyright")
+           "langserver"
+           "--stdio"))
+    ;; ensure Python interpreter follows project venvs
+    (setq lsp-pyright-python-executable-cmd "python")
+    )
 #+end_src
 
 Automatic code formatting using Black
@@ -812,17 +825,91 @@ Optional: Python-specific indentation setting
   (setq python-indent-offset 4)
 #+end_src
 
-Optional: sidebar with symbols and project browser
+** C++
 
 #+begin_src emacs-lisp
-  ;; (use-package treemacs
-  ;; :ensure t)
-
-  ;; (use-package lsp-treemacs
-  ;;   :ensure t
-  ;;   :after lsp)
+  (use-package cc-mode
+    :ensure nil
+    :config
+    (setq c-default-style "stroustrup"
+          tab-width 4
+          c-basic-offset 4
+          indent-tabs-mode nil)
+    (electric-pair-mode)
+    )
 #+end_src
 
+** CMake
+
+#+begin_src emacs-lisp
+  (use-package cmake-mode
+    :ensure t)
+#+end_src
+
+** Containerization
+
+[[https://github.com/Silex/docker.el][Docker package]] for Emacs, like Magit for Git.
+
+Note: I'm getting an error saying package =docker= is not found ????
+
+#+begin_src emacs-lisp
+  ;; (use-package docker
+    ;; :ensure t
+    ;; :bind ("C-c d" . docker)
+    ;; :config
+    ;; (setf docker-command "docker"
+          ;; docker-compose-command "docker-compose"
+          ;; docker-container-tramp-method "docker")
+    ;; )
+
+  ;; (use-package tramp-container
+    ;; :ensure t
+    ;; )
+#+end_src
+
+Dockerfile syntax and highlight via [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]].
+
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode
+    :ensure t
+    :config
+    (setq dockerfile-mode-command "docker")
+    )
+#+end_src
+
+For more resources, e.x. to access the containers with Tramp , we can see also [[https://www.emacswiki.org/emacs/Docker][this]] Emacs Wiki article.
+
+Also, for =apptainer/singularity= there's not much support yet. Everything I could find was this simple mode to recognize the syntax. See [[https://github.com/jrgant/apptainer-mode][this repository]].
+
+#+begin_src emacs-lisp
+  ;; (load-file "~/.emacs.d/apptainer-mode/apptainer-mode.el")
+  (use-package apptainer-mode
+    :load-path "~/.emacs.d/apptainer-mode"
+    :config
+    ;; Add the extension files to automatically load the mode
+    (add-to-list 'auto-mode-alist '("\\.apptainer\\'" . apptainer-mode))
+    (add-to-list 'auto-mode-alist '("\\.def\\'" . apptainer-mode))
+    ;; Configure lsp-mode to ignore apptainer-mode
+    (eval-after-load "lsp-mode"
+      '(progn
+         (setq lsp-language-id-configuration
+               '(apptainer-mode nil))
+         ))
+    )
+#+end_src
+
+** YAML
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :defer t
+    :ensure t
+    :mode
+    ("\\.yaml\\'" "\\.yml\\'")
+    :custom-face
+    (font-lock-variable-name-face ((t (:foreground "#cba6f7"))))
+    )
+#+end_src
 * Projectile
 
 #+begin_src emacs-lisp
@@ -894,13 +981,6 @@ Optional: sidebar with symbols and project browser
       '(setcar (cdr (assoc 'output-pdf TeX-view-program-selection)) "Evince"))
     )
 #+END_SRC
-* YAML
-
-#+begin_src emacs-lisp
-  (use-package yaml-mode
-    :ensure t
-    )
-#+end_src
 * Spell for windows
 # Info tomada de: https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html
 #+BEGIN_SRC emacs-lisp
@@ -959,7 +1039,7 @@ Some resources to which you can refer here are:
 Setting the name of the file where all the captured notes are going to.
 
 #+begin_src emacs-lisp
-  (setq organizer-file "20230105T175954--organizer__personal.org")
+  (setq organizer-file "20251112T161039--organizer__personal.org")
 #+end_src
 
 
@@ -968,7 +1048,7 @@ Set =C-c o= to edit the =organizer= file:
 #+BEGIN_SRC emacs-lisp
   (defun organizer-visit ()
     (interactive)
-    (find-file (concat "/media/Datos/notes/" organizer-file)))
+    (find-file (concat "~/Documents/notes/" organizer-file)))
   (global-set-key (kbd "C-c o") 'organizer-visit)
 #+END_SRC
 
@@ -1009,18 +1089,17 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                   ("CANCELED" :background "DarkOliveGreen2" :foreground "black" :weight bold)
                   ("DELEGATED" :background "aquamarine2"     :foreground "black" :weight bold))))
     (setq org-tag-alist
-          '(("@project" . ?p) ("@someday" . ?s) ("@pyrene" . ?y) ("@curta" . ?c) ("@irene" . ?i)))
+          '(("@project" . ?p) ("@someday" . ?s) ("@orcus" . ?o)))
 
     ;;
     ;; TODO states trigers
     (setq org-todo-state-tags-triggers
-          (quote ((done ("@pyrene") ("@curta") ("@irene") ("@project") ("@someday")))))
+          (quote ((done ("@orcus") ("@project") ("@someday")))))
 
     ;;
     ;; Capture
-    (setq org-directory "/media/Datos/notes/")
+    (setq org-directory "~/Documents/notes/")
     (setq org-default-notes-file (concat org-directory organizer-file))
-    (setq org-health-tracking-file (concat org-directory "20230815T112721--health-tracking__health.org"))
     (global-set-key (kbd "C-c c") 'org-capture)      ;; use C-c c to start capture mode
 
     ;; capture templates for: TODO tasks, Notes, appointments, meetings
@@ -1028,12 +1107,6 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     (setq org-capture-templates
           '(("t" "Todo" entry (file+headline org-templates-location-var "Inbox")
              "* TODO %? \nCaptured on %U")
-            ("h" "Health Tracking" entry (file+headline org-health-tracking-file "Daily data")
-             "* %t \n:PROPERTIES:\n:barras: %?\n:pararelas: \n:planchas: \n:abdominales: \n:dificultad: \n:ánimo: \n:tiempo: \n:sueño: \n:ayuno: \n:caminar: \n:END:")
-            ("r" "Read later / take a note" entry (file+headline org-templates-location-var "Inbox")
-             "* Note from %a\nCaptured on: %U\n\n*Highlighted region*: %(print \"%i\")\n%?")
-            ("n" "Newsletter / Curation" entry (file+headline org-templates-location-var "Content Reading / Curating")
-               "* Note from %a\nCaptured on: %U\n\n*Highlighted region*: %(print \"%i\")\n%?")
             ("c" "Coding" entry (file+headline org-templates-location-var "Inbox")
              "* TODO %? \nCaptured on %U\n*File*: [[file+emacs:%F]]\n*Highlighted region*:\n#+begin_src\n%i\n#+end_src\n\n")))
 
@@ -1050,11 +1123,11 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     ;;
     (global-set-key (kbd "C-c a") 'org-agenda)
     ;;
-    ;; Format of the columns in the agenda view
+    ;; Format of the columns in the agenda view - Turn on with C-c C-x C-c
     (setq org-columns-default-format-for-agenda "%65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)")
     ;; Format the habits tracker in the agenda buffer
-    (setq org-habit-following-days 1)
-    (setq org-habit-graph-column 80)
+    ;; (setq org-habit-following-days 1)
+    ;; (setq org-habit-graph-column 80)
 
 
     (setq org-agenda-custom-commands
@@ -1085,10 +1158,10 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                             (priority-down deadline-down effort-down)))
                           (org-agenda-max-entries 5)))
               ;; (agenda ""
-              ;;         ((org-agenda-overriding-header "The Week in a Glance:")
-              ;;          (org-agenda-sorting-strategy
-              ;;           (quote
-              ;;            (time-up deadline-down priority-down)))))
+              ;; ((org-agenda-overriding-header "The Week in a Glance:")
+              ;; (org-agenda-sorting-strategy
+              ;; (quote
+              ;; (time-up deadline-down priority-down)))))
               (tags "+@capture-@excludeFromAgenda"
                     ((org-agenda-overriding-header "Items to refile")
                      ;;(org-tags-match-list-sublevels nil)
@@ -1106,16 +1179,6 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                          (org-agenda-sorting-strategy
                           (quote
                            (priority-down deadline-down effort-down)))))
-              (tags-todo "TODO=\"COMPUTING\"+@pyrene"
-                          ((org-agenda-overriding-header "Computations Pyrene")
-                           (org-agenda-sorting-strategy
-                            (quote
-                             (priority-down deadline-down effort-down)))))
-              (tags-todo "TODO=\"COMPUTING\"+@irene"
-                          ((org-agenda-overriding-header "Computations TGCC")
-                           (org-agenda-sorting-strategy
-                            (quote
-                             (priority-down deadline-down effort-down)))))
               ))
             ("p" "Projects"
              ((tags-todo "+@project-@someday/-DELEGATED-DONE-CANCELED"
@@ -1140,7 +1203,7 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
 
     ;; as the @project tag defines what is a project, I do not want all the sub-trees are marked also as projects
     ;; I want to manually set what are the projects 
-    (setq org-tags-exclude-from-inheritance '("@project" "project" "blog" "@excludeFromAgenda"))
+    (setq org-tags-exclude-from-inheritance '("@project" "project" "@excludeFromAgenda"))
 
     )
 #+end_src
@@ -1186,15 +1249,6 @@ See also https://orgmode.org/manual/Categories.html for more.
           (search . "%(vulpea-agenda-category 12) ")))
 #+end_src
 
-Add the habit module to org.
-
-#+begin_src emacs-lisp
-  ;;
-  ;; Habits module enabled
-  ;; (add-to-list 'org-modules 'habit)
-  (require 'org-habit)
-#+end_src
-
 Remove tags from the right columns of the agenda dispatcher.
 
 #+begin_src emacs-lisp
@@ -1212,11 +1266,11 @@ Do not start the Agenda on Mondays, but the day you are on
 To execute certain languages inside an org buffer and to use the data contained in it (ex. tables), you need to enable the language. See the documentation [[https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-gnuplot.html][in the case of gnuplot]] and [[https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-python.html][in the case of python]] for more information.
 
 #+begin_src emacs-lisp
-      ;; active Babel languages
-      (org-babel-do-load-languages
-       'org-babel-load-languages
-       '((gnuplot . t)
-         (python . t)))
+  ;; active Babel languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((gnuplot . t)
+     (python . t)))
 #+end_src
 
 ** Org-bullets
@@ -1281,55 +1335,6 @@ Enable Markdown export back-end (see [[https://orgmode.org/manual/Exporting.html
     (setq org-latex-classes nil))
 #+end_src
 
-** Org-mode links integration with Thunderbird
-
-Some years ago it was possible to use the [[https://github.com/mikehardy/thunderlink][Thunderlink]] plugin to obtain a "link" to a specific email, and when you clicked that link it would open Thunderbird with a focus on the required email. However, that project died. Fortunately, [[https://camiel.bouchier.be/en/about-me][Camiel Bouchier]] made the necessary re-writing of the code need to make it work with newer versions of Thunderbird's API, in what it's called [[https://github.com/CamielBouchier/cb_thunderlink][cb_thunderlink]]. For the time of writing ([2023-08-26 Sat]) it is still maintained, let's hope it keeps that way.
-
-The (sort of) documentation for the plugin is on [[https://camiel.bouchier.be/en/cb_thunderlink][this post]] of Camiel's website. And to use it in conjunction with Emacs it is also needed an Elisp workaround to tell emacs how to respond when =org-open-at-point= is executed on one of =cb_thunderlink='s link.
-1) The installation of the =cb_thunderlink= plugin is straightforward in the Thunderbird Plugin Store.
-2) The workaround, on the other hand, I got from [[https://vxlabs.com/][vxlabs]]' website, where he explains how to [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]]. As you may have noticed, the workaround was written for =thunderlink=, not for =cb_thunderlink=, so I have made some modifications to it. Also, there was a conditional to check if the system was Mac or not, I removed that part too as I do not need it. See the code below:
-
-#+begin_src emacs-lisp
-  (setq thunderbird-program "thunderbird")
-
-  (defun org-message-thunderlink-open (slash-message-id)
-    "Handler for org-link-set-parameters that converts a standard message:// link into
-   a thunderlink and then invokes thunderbird."
-    ;; remove any / at the start of slash-message-id to create real message-id
-    (let ((message-id
-           (replace-regexp-in-string (rx bos (* "/"))
-                                     ""
-                                     slash-message-id)))
-      (kill-new (concat "cbthunderlink://" message-id))
-      (start-process
-       (concat "cbthunderlink: " message-id)
-       nil
-       thunderbird-program
-       "-cbthunderlink"
-       (concat "cbthunderlink://" message-id)
-       )))
-  ;; on message://aoeu link, this will call handler with //aoeu
-  (org-link-set-parameters "message" :follow #'org-message-thunderlink-open)
-#+end_src
-
-A link generated with =cb_thunderlink= looks something like this:
-
-#+begin_example
-cbthunderlink://MjAyMy0wOC0yNVQxNToyOTowMC4wMDBaO05h
-#+end_example
-
-In the article [[https://vxlabs.com/2019/04/20/link-thunderbird-emails-from-emacs-orgmode/][Link directly to emails from Emacs Orgmode using Thunderbird and Thunderlink]] they suggest to write in your notes =message= instead of =cbthunderlink=, this way you can use something else in the future in case =cb_thunderlink= also dies as the linking system in your notes will not depend on it (at least completely).
-
-In the configuration of the =cb_thunderlink= plugin you can manage the format to copy the email link. In my case I have made one called =emacsOrgLink=, which is set to ~[[message://$cblink$][$subject$]]~ to comply with Org-mode link format. Note that the name of the link will be the subject of the email.
-
-The code above will associate the function ~org-message-thunderlink-open~ to the =message= key when =org-open-at-point= is executed on these links, and then it will replace =message= with =cbthunderlink= to pass the link to Thunderbird. Of course this part can be avoided by just letting the links in their original format (starting with =cbthunderlink=), and the function would be really simple. Once more, I chose =message= over =cbthunderlink= because =message= is built in Emacs. Nevertheless, I do not think if I stop using Thunderbird and go to Mu4e or Gnus the links would work (because of their =messageid= being different in Mu4e-Gnus VS =cb_thunderlink=). Anyway see [[https://vxlabs.com/2023/08/08/open-message/-links-with-mu4e-or-fastmail/][this recent post]] of vxlab which is similar to the one discussed above, but for Mu4e and fastmail. You can decide which format to use.
-
-The last point to highlight is the use of ~(kill-new (concat "cbthunderlink://" message-id))~. Because of limitations of the Thunderbird API, which dropped support for the =thunderbird -thunderlink <email-link>= clickable feature, =cb_thunderlink= cannot directly open the emial is some systems (see documentation). In those systems where it cannot simulate the needed behavior and open the specific email directly, instead, it creates a button on the top-right corner (close to the "Display Thunderbird menu"), which once clicked will use the content of the clipboard to open the corresponding email, in case the content of the clipboard is a =cb_thunderlink= email link. This line of code copy the email link to the clipboard so we can access the desired email.
-
-Summarizing, once everything is set up. You right-click on the body of the email in Thunderbird, go to the =cb_thunderlink= menu entry (usually on the bottom), and copy the formatted link you established (=emacsOrgLink= in my case). Next, past it in Emacs. Once you need to use it, just execute =org-open-at-point= (C-c C-o), and it will open Thunderbird, but in some cases not yet the specific email. If this functionality is missing, to open the specific email just click on the =cb_thunderlink= button on the top-right region. You should see now the email.
-
-This solution is not es elegant as the use of Gnus and Notmuch, but certainly will require much less setup than those two, and time, which I don't have right now for that. If you have not the time, or would like to continue with the visual interface oriented approach that is Thunderbird in face to Gnus and Notmuch, this is the solution to have links in your notes redirecting to the related  email.
-
 ** Org-cite and citations handling
 To configure the citations within Org, we have its Org-cite functionality. More information about this
 functionality can be found in the follwoing sources:
@@ -1377,14 +1382,6 @@ For LaTeX it is possible to specify other options and customizations, and if it 
 way to do so exclusively using Org-cite, I have come to find the use of =#+LATEX_HEADER:= to add LaTeX
 options. I have created an Skeleton in [[*Org mode and note taking][Org mode and note taking]] section which is called
 =skeleton-org-export-latex-options= to handle automatically the necessary options to export to as I want.
-* Calendar and Diary
-
-The following option displays by default the dates which are holidays in a different face in the calendar. This can be achieved also pressing =x= in the calendar buffer. To remove this behavior use the key =u= in the calendar buffer. For more information see section "28.6 Holidays" in the Emacs Manual.
-
-#+begin_src emacs-lisp
-(setq calendar-mark-holidays-flag t)
-#+end_src
-
 * Denote
 
 *Denote Tips*
@@ -1399,20 +1396,20 @@ The following option displays by default the dates which are holidays in a diffe
     :config
     ;;
     ;; General key bindings
-    (setq denote-directory (expand-file-name "/media/Datos/notes"))
+    (setq denote-directory (expand-file-name "~/Documents/notes/"))
     (setq denote-known-keywords '("emacs" "project"))
     (setq denote-infer-keywords t)
     (setq denote-sort-keywords t)
     ;;
     ;; Tweaking the frontmatter
     (setq denote-org-front-matter
-          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    overview hideblocks\n\n")
+          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    overview hideblocks\n#+category:   \n#+options:    toc:1 num:1\n\n")
     :bind
     ("C-c n f" . denote-open-or-create)
     ("C-c n n" . denote)
     ("C-c n l" . denote-link-or-create)
     ("C-c n B" . denote-find-link)
-    ("C-c n b" . denote-backlinks)
+    ("C-c n b" . denote-find-backlink)
     )
 #+end_src
 
@@ -1430,7 +1427,7 @@ and not a string. Also, if instead of =setq= one uses =add-to-list=, it is ok to
 
 #+begin_src emacs-lisp
   (setq org-agenda-file-regexp "\\`[^.].*_project.*\\.org\\'")
-  (setq org-agenda-files (list "/media/Datos/notes/" (concat org-directory organizer-file)))
+  (setq org-agenda-files (list "~/Documents/notes/" (concat org-directory organizer-file)))
 #+end_src
 
 But the addition of the project files to the agenda will happen when Emacs loads, what if we added some other
@@ -1494,66 +1491,6 @@ the =org-agenda-files= variable. In fact, that solution is much better than addi
 =_project= keyword in their name, but it is not possible to implement while using Denote. Because Denote do
 not uses databases, the search for all the files containing =:project:= as keyword in the org heading is not
 possible. 
-
-** Journal entries
-
-Define a function to handle the creation of the journal entry:
-
-#+begin_src emacs-lisp
-  (defun my-denote-journal ()
-    "Create an entry tagged 'journal' with the date as its title.
-  If a journal for the current day exists, visit it.  If multiple
-  entries exist, prompt with completion for a choice between them.
-  Else create a new file."
-    (interactive)
-    (let* ((today (format-time-string "%A %e %B %Y"))
-           (string (denote-sluggify today))
-           (files (denote-directory-files-matching-regexp string)))
-      (cond
-       ((> (length files) 1)
-        (find-file (completing-read "Select file: " files nil :require-match)))
-       (files
-        (find-file (car files)))
-       (t
-        (denote
-         today
-         '("journal"))))))
-#+end_src
-
-And add a key binding for it
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-c n j") 'my-denote-journal)
-#+end_src
-
-Finally, define a function and a keybinding to handle the creation of weekly review journal entries:
-
-#+begin_src emacs-lisp
-  (defun my-denote-weekly-review ()
-    "Create an entry tagged 'week' with the date as its title.
-  If a week-note for the current week exists, visit it.  If multiple
-  entries exist, prompt with completion for a choice between them.
-  Else create a new file."
-    (interactive)
-    (let* ((today (format-time-string "Weekly review for week number %W of %Y"))
-           (string (denote-sluggify today))
-           (files (denote-directory-files-matching-regexp string)))
-      (cond
-       ((> (length files) 1)
-        (find-file (completing-read "Select file: " files nil :require-match)))
-       (files
-        (find-file (car files)))
-       (t
-        (denote
-         today
-         '("journal"))))))
-#+end_src
-
-And add a key binding for it
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-c n w") 'my-denote-weekly-review)
-#+end_src
 
 * Markdown mode
 
@@ -1699,69 +1636,6 @@ Article skeleton
     )
 #+end_src
 
-** Hugo and blogging
-
-Heading for Markdown Hugo post using the Yugo theme
-
-#+begin_src emacs-lisp
-  (define-skeleton skeleton-md-Yugo-heading-hugo-post
-    "Heading for a new post in Hugo using Markdown and the Yugo theme"
-    nil
-    "---\n"
-    "title: \n" _
-    "author:\n"
-    "  post_name: yaidel\n"
-    "  mdata_name: yaidel\n"
-    "date: \"2023-01-01\"\n"
-    "lastmod: \"2023-01-01\"\n"
-    "categories: [""]\n"
-    "tags: [""]\n"
-    "draft: true\n"
-    "description: \n"
-    "---\n"
-    )
-#+end_src
-
-#+begin_src emacs-lisp
-  (define-skeleton skeleton-md-PaperMod-heading-hugo-post
-    "Heading for a new post in Hugo using Markdown and the PaperMod theme"
-    nil
-    "---\n"
-    "title: \"" _ "\"\n"
-    "date: 2023-04-10\n"
-    "# weight: 1 # pin the post to the begining no matter the date\n"
-    "# aliases: [\"/alias-to-post\"]\n"
-    "tags: [\"tag1\"]\n"
-    "categories: [\"cat1\"]\n"
-    "author: [\"yaidel\"]\n"
-    "showToc: false\n"
-    "TocOpen: false\n"
-    "draft: true\n"
-    "hidemeta: false\n"
-    "math: false\n"
-    "description: \"Desc Text.\"\n"
-    "cover:\n"
-    "    image: \"<figure-path>\"\n"
-    "    alt: \"<alt text>\"\n"
-    "    caption: \"<text>\"\n"
-    "    relative: true # when using page bundles set this to true\n"
-    "    hidden: false # only hide on current single page\n"
-    "---\n"
-    )
-#+end_src
-
-
-Figures polaroid like in a blog post
-
-#+begin_src emacs-lisp
-  (define-skeleton skeleton-Hugo-fig-polaroid
-    "Hugo shortcode for the images showed as Polaroid"
-    nil
-    
-    "{{< img class=\"polaroidImage\" width=\"50%\" src=\"image.png\" caption=\"Caption\" link=\"https://poview.org\" alt=\"Alternative text\" mouse=\"Mouse over\" >}}\n"
-    )
-#+end_src
-
 * GNUPlot mode
 
 #+begin_src emacs-lisp
@@ -1773,19 +1647,4 @@ Figures polaroid like in a blog post
   (use-package gnuplot
     :ensure t)
 #+end_src
-
-* Go-Lang mode
-
-#+begin_src emacs-lisp
-  (use-package go-mode
-    :ensure t)
-#+end_src
-
-* Packages I want to try and probably use
-- PDFTools: https://github.com/vedang/pdf-tools
-- Org-noter: https://github.com/weirdNox/org-noter
-- Org-Download: https://github.com/abo-abo/org-download
-- Org-Protocol: https://orgmode.org/worg/org-contrib/org-protocol.html
-- Eglot: https://github.com/joaotavora/eglot
-  - It's like an auto-completion and helper major mode.
 
