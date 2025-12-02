@@ -307,6 +307,7 @@ To manage workspaces, I'm using the [[https://github.com/nex3/perspective-el][pe
     (setq persp-state-default-file "~/.emacs.d/perspectives-workspaces")
     (add-hook 'kill-emacs-hook #'persp-state-save)
     ;; (add-hook 'kill-buffer-hook #'persp-state-save)
+
     ;; Load perspectives on startup
     (defun load-perspectives-on-startup ()
       "Load perspectives state on startup."
@@ -531,115 +532,6 @@ Hide dotfiles by default, and add =super + h= keybinding to toggle:
   ;; ;; keybinding toggle
   ;; (define-key dired-mode-map (kbd "s-h") 'dired-omit-mode)
 #+END_SRC
-** Elfeed
-:PROPERTIES:
-:ID:       4529071a-2ea8-4299-90b9-0593cc31ecda
-:END:
-   
-Load elfeed
-
-#+begin_src emacs-lisp
-  ;; the database is strored in ~/.elfeed by default
-  ;; after remove an rss, if you want to remove old entries from it, just delete the database with emacs shuted down 
-  (use-package elfeed
-    :ensure t
-    :init
-    (setq elfeed-db-directory "~/config/elfeed/elfeeddb")
-    :bind
-    (("C-x w" . elfeed))
-    :config
-    ;; Personalized authors list
-    (add-hook 'elfeed-search-mode-hook 'elfeed-update)
-    ;;(setq elfeed-search-title-max-width 100)
-    (setq elfeed-search-filter "@2-week-ago +unread"))
-#+end_src
-
-Load elfeed-org to allow rss feeds to be set up with an org file: (It is important to note that each 1st
-heading need to have the tag =elfeed= in order to be correctly parsed by the =elfeed-org= package. This
-means that all the entries have the =elfeed= tag.)
-
-   
-#+begin_src emacs-lisp
-  (use-package elfeed-org
-    :ensure t
-    :config
-    (elfeed-org)
-    (setq rmh-elfeed-org-files (list "~/config/dotFiles/elfeed.org"))
-    )
-#+end_src
-
-Download video of the feed in the folder ~/Videos directly with the key binding =d=
-
-#+begin_src emacs-lisp
-  (defun ytg/yt-dl-it (url)
-    "Downloads the URL in an async shell"
-    (let ((default-directory "~/Videos"))
-      (async-shell-command (format "yt-dlp %s" url))))
-
-  (defun ytg/elfeed-youtube-dl (&optional use-generic-p)
-    "Youtube-DL link"
-    (interactive "P")
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-	       ;;do (elfeed-untag entry 'unread)
-	       when (elfeed-entry-link entry)
-	       do (ytg/yt-dl-it it))
-      (mapc #'elfeed-search-update-entry entries)
-      (unless (use-region-p) (forward-line))))
-
-  (define-key elfeed-search-mode-map (kbd "d") 'ytg/elfeed-youtube-dl)
-#+end_src
-
-Start reproducing the video of the feed with the key =v=
-   
-#+begin_src emacs-lisp
-  (defun ytg/elfeed-v-mpv (url)
-    "Watch a video from URL in MPV" 
-    (async-shell-command (format "mpv %s" url)))
-
-  (defun ytg/elfeed-view-mpv (&optional use-generic-p)
-    "Youtube-feed link"
-    (interactive "P")
-    (let ((buffer (current-buffer))
-	  (entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-	       do (elfeed-untag entry 'unread)
-	       when (elfeed-entry-link entry) 
-	       do (ytg/elfeed-v-mpv it)) 
-      (mapc #'elfeed-search-update-entry entries) 
-      (unless (use-region-p) (forward-line)))) 
-
-  (define-key elfeed-search-mode-map (kbd "v") 'ytg/elfeed-view-mpv)
-#+end_src
-
-Appearance settings:
-
-#+BEGIN_SRC emacs-lisp
-  ;; (setq-default elfeed-initial-tags nil)
-  ;; (setq-default elfeed-search-date-format (quote ("%a, %R" 10 :left)))
-  ;; (setq-default elfeed-curl-max-connections 100)
-  ;; (setq-default elfeed-search-trailing-width 30)
-#+END_SRC
-** Org-capture in Elfeed configuration
-
-When I am reading an article in [[id:4529071a-2ea8-4299-90b9-0593cc31ecda][Elfeed]], sometimes some idea popup and I want to capture it. Normally, I would have to manually copy the link, and then open the regular capture template I have and make the capture of the idea. What the following function does is to automate the copying part. The variable ~org-store-link-functions~ is set to ~ytg/org-elfeed-entry-store-link~, so in the =org-capture-template= dedicated to this purpose we can use =%a= to [[https://orgmode.org/manual/Template-expansion.html][retrieve the stored link]]. See the =org-capture-template= =Read later / take a note= on the section [[id:ebdfd897-7542-44e6-8413-632b41e7fb32][Org mode]] which makes use of this functions and hook by using =%a=, as previously explained.
-
-This solution was taken from [[https://yiming.dev/blog/2016/01/28/add-org-store-link-entry-for-elfeed/][this post of Yiming Chen]].
-
-#+begin_src emacs-lisp
-(defun ytg/org-elfeed-entry-store-link ()
-  (when elfeed-show-entry
-    (let* ((link (elfeed-entry-link elfeed-show-entry))
-           (title (elfeed-entry-title elfeed-show-entry)))
-      (org-store-link-props
-       :link link
-       :description title)
-      )))
-
-(add-hook 'org-store-link-functions
-          'ytg/org-elfeed-entry-store-link)
-#+end_src
-
 ** Which-key
 
 When typing in the M-x, it shows a list of possibilities
@@ -707,7 +599,8 @@ Core LSP functionality (works for all languages)
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :ensure t
-    :hook ((prog-mode . lsp-deferred))  ;; start LSP for any programming mode
+    :hook ((prog-mode . lsp-deferred)  ;; start LSP for any programming mode
+           (apptainer-mode . (lambda () (lsp-mode -1))))  ;; disable LSP for Apptainer
     :commands (lsp lsp-deferred)
     :config
     (setq lsp-headerline-breadcrumb-enable nil)
@@ -722,9 +615,10 @@ Core LSP functionality (works for all languages)
     ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
     ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
     ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
+
+    ;; Optionally, prevent LSP from being triggered for apptainer-mode
     (with-eval-after-load 'lsp-mode
-      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none")))
-    )
+      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))))
 #+end_src
 
 Optional UI enhancements for LSP (hover docs, sideline, etc.)
@@ -837,7 +731,7 @@ Optional: Python-specific indentation setting
           tab-width 4
           c-basic-offset 4
           indent-tabs-mode nil)
-    (electric-pair-mode)
+    ;; (electric-pair-mode)
     )
 #+end_src
 
