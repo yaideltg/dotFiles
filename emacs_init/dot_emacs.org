@@ -722,15 +722,15 @@ In case Emacs fails to detect the =venv= by itself, we can help with the followi
 ** C++
 
 #+begin_src emacs-lisp
-  (use-package cc-mode
-    :ensure nil
-    :config
-    (setq c-default-style "stroustrup"
-          tab-width 4
-          c-basic-offset 4
-          indent-tabs-mode nil)
-    ;; (electric-pair-mode)
-    )
+(use-package cc-mode
+  :ensure nil
+  :hook ((c-mode . lsp-deferred)
+         (c++-mode . lsp-deferred))
+  :config
+  (setq c-default-style "stroustrup"
+        tab-width 4
+        c-basic-offset 4
+        indent-tabs-mode nil))
 #+end_src
 
 ** CMake
@@ -1271,7 +1271,7 @@ options. I have created an Skeleton in [[*Org mode and note taking][Org mode and
     ;;
     ;; Tweaking the frontmatter
     (setq denote-org-front-matter
-          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    overview\n#+category:   \n#+options:    toc:1 num:1\n\n")
+          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    showall\n#+options:    toc:1 num:1\n#+category:   \n\n")
     :bind
     ("C-c n f" . denote-open-or-create)
     ("C-c n n" . denote)
