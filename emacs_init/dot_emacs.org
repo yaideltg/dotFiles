@@ -710,6 +710,15 @@ Optional: Python-specific indentation setting
   (setq python-indent-offset 4)
 #+end_src
 
+In case Emacs fails to detect the =venv= by itself, we can help with the following package:
+
+#+begin_src emacs-lisp
+  ;; (use-package envrc
+  ;;   :ensure t
+  ;;   :config
+  ;;   (envrc-global-mode))
+#+end_src
+
 ** C++
 
 #+begin_src emacs-lisp
