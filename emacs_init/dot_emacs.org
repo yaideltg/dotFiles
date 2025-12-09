@@ -597,28 +597,29 @@ When typing in the M-x, it shows a list of possibilities
 Core LSP functionality (works for all languages)
 
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :hook ((prog-mode . lsp-deferred)  ;; start LSP for any programming mode
-           (apptainer-mode . (lambda () (lsp-mode -1))))  ;; disable LSP for Apptainer
-    :commands (lsp lsp-deferred)
-    :config
-    (setq lsp-headerline-breadcrumb-enable nil)
-    (setq lsp-idle-delay 0.2)
-    (setq lsp-log-io nil)
-    (setq lsp-enable-symbol-highlighting t)
-    (setq lsp-completion-provider :capf)
-    ;; Keybinding
-    (define-key lsp-mode-map (kbd "M-.") #'lsp-find-definition)
-    (define-key lsp-mode-map (kbd "M-,") #'lsp-ui-imenu)
-    (define-key lsp-mode-map (kbd "M-?") #'lsp-find-references)
-    ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
-    ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
-    ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
+    (use-package lsp-mode
+      :ensure t
+      :hook ((prog-mode . lsp-deferred)                    ;; start LSP for any programming mode
+             (apptainer-mode . (lambda () (lsp-mode -1)))  ;; disable LSP for Apptainer
+             (sh-mode . (lambda () (lsp-mode -1))))        ;; disable for SH
+      :commands (lsp lsp-deferred)
+      :config
+      (setq lsp-headerline-breadcrumb-enable nil)
+      (setq lsp-idle-delay 0.2)
+      (setq lsp-log-io nil)
+      (setq lsp-enable-symbol-highlighting t)
+      (setq lsp-completion-provider :capf)
+      ;; Keybinding
+      (define-key lsp-mode-map (kbd "M-.") #'lsp-find-definition)
+      (define-key lsp-mode-map (kbd "M-,") #'lsp-ui-imenu)
+      (define-key lsp-mode-map (kbd "M-?") #'lsp-find-references)
+      ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
+      ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
+      ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
 
-    ;; Optionally, prevent LSP from being triggered for apptainer-mode
-    (with-eval-after-load 'lsp-mode
-      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))))
+      ;; Optionally, prevent LSP from being triggered for apptainer-mode
+      (with-eval-after-load 'lsp-mode
+        (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))))
 #+end_src
 
 Optional UI enhancements for LSP (hover docs, sideline, etc.)
@@ -683,9 +684,6 @@ Auto-completion
   (use-package lsp-pyright
     :ensure t
     :after lsp-mode
-    ;; :hook (python-mode . (lambda ()
-                           ;; (require 'lsp-pyright)
-                           ;; (lsp-deferred)))  ;; start LSP just for Python
     :config
     (setq lsp-client-packages '(lsp-pyright))
     (setq lsp-pyright-multi-root nil)
@@ -693,16 +691,7 @@ Auto-completion
     (setq lsp-pyright-use-library-code-for-types t)
     (lsp-dependency
      'pyright
-     '(:system "~/.venvs/pyright-venv/bin/pyright"))
-    ;; Use pyright inside your virtual environment
-    (setq lsp-pyright-langserver-command
-          (list
-           (expand-file-name "~/.venvs/pyright-venv/bin/pyright")
-           "langserver"
-           "--stdio"))
-    ;; ensure Python interpreter follows project venvs
-    (setq lsp-pyright-python-executable-cmd "python")
-    )
+     '(:system "~/.venvs/pyright-venv/bin/pyright-langserver")))
 #+end_src
 
 Automatic code formatting using Black
@@ -1273,7 +1262,7 @@ options. I have created an Skeleton in [[*Org mode and note taking][Org mode and
     ;;
     ;; Tweaking the frontmatter
     (setq denote-org-front-matter
-          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    overview hideblocks\n#+category:   \n#+options:    toc:1 num:1\n\n")
+          "#+title:      %s\n#+date:       %s\n#+filetags:   %s\n#+identifier: %s\n#+author:     yaidel\n#+startup:    overview\n#+category:   \n#+options:    toc:1 num:1\n\n")
     :bind
     ("C-c n f" . denote-open-or-create)
     ("C-c n n" . denote)
