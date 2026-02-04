@@ -420,7 +420,7 @@ See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenien
     ;; Optionally configure the register formatting. This improves the register
     ;; preview for `consult-register', `consult-register-load',
     ;; `consult-register-store' and the Emacs built-ins.
-    (setq register-preview-delay 0.5
+    (setq register-preview-delay 1.5
           register-preview-function #'consult-register-format)
 
     ;; Optionally tweak the register preview window.
@@ -974,9 +974,9 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
     (setq org-templates-location-var (concat org-directory organizer-file))
     (setq org-capture-templates
           '(("t" "Todo" entry (file+headline org-templates-location-var "Inbox")
-             "* TODO %? \nCaptured on %U")
+             "* TODO %? :@capture:\nCaptured on %U")
             ("c" "Coding" entry (file+headline org-templates-location-var "Inbox")
-             "* TODO %? \nCaptured on %U\n*File*: [[file+emacs:%F]]\n*Highlighted region*:\n#+begin_src\n%i\n#+end_src\n\n")))
+             "* TODO %? :@capture:\nCaptured on %U\n*File*: [[file+emacs:%F]]\n*Highlighted region*:\n#+begin_src\n%i\n#+end_src\n\n")))
 
     ;; Format the COLUMNS by default
     (setq org-columns-default-format "%65item(Task) %Effort(Effort){:} %clocksum_t(Today) %clocksum(Total)")
