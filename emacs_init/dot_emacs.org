@@ -593,6 +593,9 @@ When typing in the M-x, it shows a list of possibilities
 #+end_src
 
 * Programming IDE
+:PROPERTIES:
+:ID:       80211d26-d181-4b24-bb65-64cac814f1e1
+:END:
 
 Core LSP functionality (works for all languages). At work I had to create a Python virtual environment at =~/.venvs/pyright-venv= so I can install language servers, and then point Emacs to use it. Thus, in every configuration that the =venv= is specified, it's recovering the =lsp= language server from that =venv=. Consequently, for new language servers, they need to be installed in that =venv=, and then configured in the =use-package= section, as done for some cases down below. Also, in the case of ~bash-language-server~ it needs to be installed with =npm= and not in the =venv=. But Emacs is not usually able to find it because it normally doesn't load the full =PATH=. A solution would be to check where was it installed with ~which bash-language-server~ and then add it to the execution path ~(add-to-list 'exec-path "/home/youruser/.npm-global/bin")~. However, there's a better way: using package ~exec-path-from-shell~. We start by setting that, and the continue to =lsp=.
 
@@ -741,6 +744,8 @@ In case Emacs fails to detect the =venv= by itself, we can help with the followi
 
 ** CMake
 
+Following on the comments on =venv= for the =lsp= servers at the beginning of [[id:80211d26-d181-4b24-bb65-64cac814f1e1][this section]], in this specific case I needed to create another =venv= (which I realized is possible, thus we could create a =venv= for each language server to avoid conflicts). I couldn't install the =cmake-language-server= in the same as =pyright= because it required specific versions of a package, and then I didn't wanted a conflict. That dependency with a specific version required is =pygls=. Long story short, install this ~uv pip install cmake-language-server "pygls>=1.1.1,<2.0" --force-reinstall~ on the =cmake= =venv=, and it should work. test it with =~/.venvs/cmake-venv/bin/cmake-language-server --version=.
+
 #+begin_src emacs-lisp
   (use-package cmake-mode
     :ensure t
@@ -749,7 +754,7 @@ In case Emacs fails to detect the =venv= by itself, we can help with the followi
     :config
     (with-eval-after-load 'lsp-cmake
       (setq lsp-cmake-server-command
-            '("~/.venvs/pyright-venv/bin/cmake-language-server"))))
+          (expand-file-name "~/.venvs/cmake-venv/bin/cmake-language-server"))))
 #+end_src
 
 ** Containerization
