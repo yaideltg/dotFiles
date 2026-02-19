@@ -594,32 +594,39 @@ When typing in the M-x, it shows a list of possibilities
 
 * Programming IDE
 
-Core LSP functionality (works for all languages)
+Core LSP functionality (works for all languages). At work I had to create a Python virtual environment at =~/.venvs/pyright-venv= so I can install language servers, and then point Emacs to use it. Thus, in every configuration that the =venv= is specified, it's recovering the =lsp= language server from that =venv=. Consequently, for new language servers, they need to be installed in that =venv=, and then configured in the =use-package= section, as done for some cases down below. Also, in the case of ~bash-language-server~ it needs to be installed with =npm= and not in the =venv=. But Emacs is not usually able to find it because it normally doesn't load the full =PATH=. A solution would be to check where was it installed with ~which bash-language-server~ and then add it to the execution path ~(add-to-list 'exec-path "/home/youruser/.npm-global/bin")~. However, there's a better way: using package ~exec-path-from-shell~. We start by setting that, and the continue to =lsp=.
 
 #+begin_src emacs-lisp
-    (use-package lsp-mode
-      :ensure t
-      :hook ((prog-mode . lsp-deferred)                    ;; start LSP for any programming mode
-             (apptainer-mode . (lambda () (lsp-mode -1)))  ;; disable LSP for Apptainer
-             (sh-mode . (lambda () (lsp-mode -1))))        ;; disable for SH
-      :commands (lsp lsp-deferred)
-      :config
-      (setq lsp-headerline-breadcrumb-enable nil)
-      (setq lsp-idle-delay 0.2)
-      (setq lsp-log-io nil)
-      (setq lsp-enable-symbol-highlighting t)
-      (setq lsp-completion-provider :capf)
-      ;; Keybinding
-      (define-key lsp-mode-map (kbd "M-.") #'lsp-find-definition)
-      (define-key lsp-mode-map (kbd "M-,") #'lsp-ui-imenu)
-      (define-key lsp-mode-map (kbd "M-?") #'lsp-find-references)
-      ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
-      ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
-      ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+#+end_src
 
-      ;; Optionally, prevent LSP from being triggered for apptainer-mode
-      (with-eval-after-load 'lsp-mode
-        (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))))
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :hook ((prog-mode . (lambda ()  ;; start LSP for any programming mode but apptainer
+                        (unless (derived-mode-p 'apptainer-mode)
+                          (lsp-deferred)))))
+    :commands (lsp lsp-deferred)
+    :config
+    (setq lsp-headerline-breadcrumb-enable nil)
+    (setq lsp-idle-delay 0.2)
+    (setq lsp-log-io nil)
+    (setq lsp-enable-symbol-highlighting t)
+    (setq lsp-completion-provider :capf)
+    ;; Keybinding
+    (define-key lsp-mode-map (kbd "M-.") #'lsp-find-definition)
+    (define-key lsp-mode-map (kbd "M-,") #'lsp-ui-imenu)
+    (define-key lsp-mode-map (kbd "M-?") #'lsp-find-references)
+    ;; (define-key lsp-mode-map (kbd "C-c l r") #'lsp-rename)
+    ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
+    ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
+
+    ;; Optionally, prevent LSP from being triggered for apptainer-mode
+    (with-eval-after-load 'lsp-mode
+      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))))
 #+end_src
 
 Optional UI enhancements for LSP (hover docs, sideline, etc.)
@@ -664,7 +671,6 @@ Auto-completion
     (setq company-tooltip-align-annotations t)
     (setq company-tooltip-flip-when-above t)
     (setq company-idle-delay 0.2)
-    (setq company-tooltip-align-annotations t)
     (setq company-minimum-prefix-length 1)
     (setq company-format-margin-function #'company-text-icons-margin)
     )
@@ -685,8 +691,8 @@ Auto-completion
     :ensure t
     :after lsp-mode
     :config
-    (setq lsp-client-packages '(lsp-pyright))
-    (setq lsp-pyright-multi-root nil)
+    (add-to-list 'lsp-client-packages 'lsp-pyright)
+    ;; (setq lsp-pyright-multi-root nil)
     (setq lsp-pyright-auto-import-completions t)
     (setq lsp-pyright-use-library-code-for-types t)
     (lsp-dependency
@@ -737,7 +743,13 @@ In case Emacs fails to detect the =venv= by itself, we can help with the followi
 
 #+begin_src emacs-lisp
   (use-package cmake-mode
-    :ensure t)
+    :ensure t
+    :hook (cmake-mode . lsp-deferred) ;; Redundant due to (prog-mode . lsp-deferred)
+    ;; but it makes the intent clear and avoids any potential loading-order surprises
+    :config
+    (with-eval-after-load 'lsp-cmake
+      (setq lsp-cmake-server-command
+            '("~/.venvs/pyright-venv/bin/cmake-language-server"))))
 #+end_src
 
 ** Containerization
