@@ -757,6 +757,18 @@ Following on the comments on =venv= for the =lsp= servers at the beginning of [[
           (expand-file-name "~/.venvs/cmake-venv/bin/cmake-language-server"))))
 #+end_src
 
+** Makefile
+
+#+begin_src emacs-lisp
+  (add-to-list 'exec-path (expand-file-name "~/.venvs/makefile-venv/bin"))
+
+  (with-eval-after-load 'lsp-makefile
+    (setq lsp-makefile-server-command
+          (list (expand-file-name "~/.venvs/makefile-venv/bin/make-language-server")))
+    (setq lsp-makefile-autotools-server-command
+          (list (expand-file-name "~/.venvs/makefile-venv/bin/autotools-language-server"))))
+#+end_src
+
 ** Containerization
 
 Dockerfile syntax and highlight via [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]].
