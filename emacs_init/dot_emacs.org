@@ -609,7 +609,7 @@ Core LSP functionality (works for all languages). At work I had to create a Pyth
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :ensure t
-    :hook ((prog-mode . (lambda ()  ;; start LSP for any programming mode but apptainer
+    :hook ((prog-mode . (lambda ()  ;; start LSP for any programming mode but these
                         (unless (derived-mode-p 'apptainer-mode)
                           (lsp-deferred)))))
     :commands (lsp lsp-deferred)
@@ -629,7 +629,11 @@ Core LSP functionality (works for all languages). At work I had to create a Pyth
 
     ;; Optionally, prevent LSP from being triggered for apptainer-mode
     (with-eval-after-load 'lsp-mode
-      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))))
+      (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))
+      (add-to-list 'lsp-language-id-configuration '(makefile-gmake-mode . "makefile"))
+      (add-to-list 'lsp-language-id-configuration '(makefile-mode . "makefile"))
+      )
+    )
 #+end_src
 
 Optional UI enhancements for LSP (hover docs, sideline, etc.)
@@ -763,8 +767,8 @@ Following on the comments on =venv= for the =lsp= servers at the beginning of [[
   (add-to-list 'exec-path (expand-file-name "~/.venvs/makefile-venv/bin"))
 
   (with-eval-after-load 'lsp-makefile
-    (setq lsp-makefile-server-command
-          (list (expand-file-name "~/.venvs/makefile-venv/bin/make-language-server")))
+    ;; (setq lsp-makefile-server-command
+          ;; (list (expand-file-name "~/.venvs/makefile-venv/bin/make-language-server")))
     (setq lsp-makefile-autotools-server-command
           (list (expand-file-name "~/.venvs/makefile-venv/bin/autotools-language-server"))))
 #+end_src
@@ -807,6 +811,14 @@ Also, for =apptainer/singularity= there's not much support yet. Everything I cou
     (font-lock-variable-name-face ((t (:foreground "#cba6f7"))))
     )
 #+end_src
+* Guix
+
+#+begin_src emacs-lisp
+  (use-package guix
+    :ensure t
+    )
+#+end_src
+
 * Projectile
 
 #+begin_src emacs-lisp
