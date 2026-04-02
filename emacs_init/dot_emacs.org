@@ -627,12 +627,15 @@ Core LSP functionality (works for all languages). At work I had to create a Pyth
     ;; (define-key lsp-mode-map (kbd "C-c l a") #'lsp-execute-code-action)
     ;; (define-key lsp-mode-map (kbd "C-c l d") #'lsp-documentation)
 
-    ;; Optionally, prevent LSP from being triggered for apptainer-mode
+    ;; 1) prevent LSP from being triggered for apptainer-mode
+    ;; 2) tells LSP that when it's in a scheme-mode buffer, for example, it should identify
+    ;;    the language as "scheme" to the server. This avoids warnings about not knowing
+    ;;    which language to use.
     (with-eval-after-load 'lsp-mode
       (add-to-list 'lsp-language-id-configuration '(apptainer-mode . "none"))
       (add-to-list 'lsp-language-id-configuration '(makefile-gmake-mode . "makefile"))
       (add-to-list 'lsp-language-id-configuration '(makefile-mode . "makefile"))
-      )
+      (add-to-list 'lsp-language-id-configuration '(scheme-mode . "scheme")))
     )
 #+end_src
 
@@ -811,11 +814,48 @@ Also, for =apptainer/singularity= there's not much support yet. Everything I cou
     (font-lock-variable-name-face ((t (:foreground "#cba6f7"))))
     )
 #+end_src
-* Guix
+** Guile
+
+For coding in Guile Scheme, these two packages are quite helpful in REPL, evaluation, completion, documentation lookup, and more.
+
+#+begin_src emacs-lisp
+(use-package geiser
+  :ensure t)
+
+(use-package geiser-guile
+  :ensure t
+  :after geiser)
+#+end_src
+
+Additionally, LSP complaint about not being able to access the server when loading Guile Scheme files, thus I installed it in a separate =venv= and set it up here. That said, probably =geiser= and =geiser-guile= are all we need for guile development, and actually =semgrep= support for guile seems to be in early stages. Anyway, I included it here, it shouldn't be counterproductive.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'lsp-semgrep
+    (setq lsp-semgrep-server-command
+          '("~/.venvs/semgrep/bin/semgrep" "lsp")))
+#+end_src
+
+If at some point we would like to deactivate LSP support for Guile Scheme, something like the following would be activated to disable it, while commenting the above snippet:
+
+#+begin_src emacs-lisp
+  ;; Disable semgrep-ls for Scheme files (not installed, not needed)
+  ;; (add-hook 'scheme-mode-hook
+            ;; (lambda ()
+              ;; (setq-local lsp-disabled-clients '(semgrep-ls))))
+#+end_src
+
+* GNU Guix
+
+This is the Emacs - GNU Guix integration. It let's you manage guix package management from within Emacs. Similarly to what Magit is to Git. It's only useful when you use Guix as the daily driver package manager. 
 
 #+begin_src emacs-lisp
   (use-package guix
     :ensure t
+    :config
+    ;; Semgrep LSP (static analysis for Scheme and other languages)
+    (with-eval-after-load 'lsp-semgrep
+      (setq lsp-semgrep-server-command
+            '("~/.venvs/semgrep/bin/semgrep" "lsp")))
     )
 #+end_src
 
@@ -1049,6 +1089,11 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                           (org-agenda-sorting-strategy
                            (quote
                             (time-up deadline-down priority-down)))))
+              (agenda ""
+                      ((org-agenda-overriding-header "The Week in a Glance:")
+                       (org-agenda-sorting-strategy
+                        (quote
+                         (time-up deadline-down priority-down)))))
               (tags-todo "-@project/+WORKING"
                          ((org-agenda-overriding-header "Tasks in progress")
                           (org-agenda-sorting-strategy
@@ -1065,12 +1110,7 @@ because it uses [[*Denote][Denote's]] tags in the file name to detect the projec
                           (org-agenda-sorting-strategy
                            (quote
                             (priority-down deadline-down effort-down)))
-                          (org-agenda-max-entries 5)))
-              ;; (agenda ""
-              ;; ((org-agenda-overriding-header "The Week in a Glance:")
-              ;; (org-agenda-sorting-strategy
-              ;; (quote
-              ;; (time-up deadline-down priority-down)))))
+                          (org-agenda-max-entries 10)))
               (tags "+@capture-@excludeFromAgenda"
                     ((org-agenda-overriding-header "Items to refile")
                      ;;(org-tags-match-list-sublevels nil)
