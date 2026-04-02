@@ -844,6 +844,32 @@ If at some point we would like to deactivate LSP support for Guile Scheme, somet
               ;; (setq-local lsp-disabled-clients '(semgrep-ls))))
 #+end_src
 
+** Colorizing delimiters
+
+This colorizes the delimiters that surround point (the current =sexp= and all its ancestors), and updates live as you move the cursor. Sibling expressions stay uncolored.
+
+#+begin_src emacs-lisp
+  (use-package highlight-parentheses
+    :ensure t
+    :hook ((prog-mode . highlight-parentheses-mode)
+           (text-mode . highlight-parentheses-mode))
+    :config
+    (setq highlight-parentheses-colors
+          '("red" "orange" "yellow" "green" "cyan" "violet" "magenta")))
+#+end_src
+
+This colorizes all delimiters in the buffer, and isn't updated based on the pointer's position:
+
+#+begin_src emacs-lisp
+  ;; (use-package rainbow-delimiters
+    ;; :ensure t
+    ;; :commands rainbow-delimiters-mode
+    ;; :config
+    ;; :hook(
+          ;; (prog-mode . rainbow-delimiters-mode)
+          ;; (text-mode . rainbow-delimiters-mode)))
+#+end_src
+
 * GNU Guix
 
 This is the Emacs - GNU Guix integration. It let's you manage guix package management from within Emacs. Similarly to what Magit is to Git. It's only useful when you use Guix as the daily driver package manager. 
