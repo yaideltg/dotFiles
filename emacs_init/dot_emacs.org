@@ -429,7 +429,30 @@ See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Convenien
     ;; Use Consult to select xref locations with preview
     (setq xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref)
-     )
+
+    :config
+
+    ;; Exclude virtual environments and build artifact directories from grep.
+    ;; This affects Python (.venv, .tox, __pycache__) and other ecosystems
+    ;; (node_modules, dist, build). consult-ripgrep is an alternative that
+    ;; achieves the same result automatically via .gitignore. It needs rg
+    ;; installed in the system. I chose the latter, and thus commented this.
+    ;; (setq consult-grep-args
+    ;;       '("grep" "--null" "--line-buffered" "--color=never" "--no-heading"
+    ;;         "--with-filename" "--line-number" "--recursive" "--extended-regexp"
+    ;;         "--exclude-dir=.git"
+    ;;         "--exclude-dir=.tox"
+    ;;         "--exclude-dir=.venv"
+    ;;         "--exclude-dir=.env"
+    ;;         "--exclude-dir=__pycache__"
+    ;;         "--exclude-dir=.pytest_cache"
+    ;;         "--exclude-dir=.mypy_cache"
+    ;;         "--exclude-dir=node_modules"
+    ;;         "--exclude-dir=dist"
+    ;;         "--exclude-dir=build"
+    ;;         "--exclude-dir=.eggs"
+    ;;         "--exclude-dir=*.egg-info"))
+    ;;  )
 #+end_src
 ** Marginalia configuration
 #+begin_src emacs-lisp
